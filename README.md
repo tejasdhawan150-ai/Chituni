@@ -84,3 +84,8 @@ To add Anthropic or another provider, implement its interface and register it.
 - Uploaded resumes are checked by magic bytes, limited to 5 MB and parsed in memory. They are never stored.
 - The auth callback only allows same-origin redirects.
 - The privacy policy and terms are templates. Have them reviewed before launch.
+
+## Deploying to Vercel
+1. Import the GitHub repo on vercel.com/new. `vercel.json` already pins the Next.js build settings.
+2. Make sure the project's **Production Branch** (Settings → Git) is `main`.
+3. The app runs without environment variables in demo mode. Add the Supabase and OpenAI keys in Settings → Environment Variables to enable real accounts and the LLM.
