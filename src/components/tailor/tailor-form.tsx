@@ -23,7 +23,6 @@ export function TailorForm({ templateId, size = "default", cta = "Tailor My Resu
 
   React.useEffect(() => {
     if (!pending) return;
-    setStep(0);
     const id = setInterval(() => setStep((s) => Math.min(s + 1, STEPS.length - 1)), 900);
     return () => clearInterval(id);
   }, [pending]);
@@ -44,9 +43,10 @@ export function TailorForm({ templateId, size = "default", cta = "Tailor My Resu
     }
     let jobUrl = url.trim();
     if (jobUrl && !/^https?:\/\//i.test(jobUrl)) jobUrl = `https://${jobUrl}`;
+    setStep(0);
     setPending(true);
     const res = unwrap(await analyzeJobAction({ jobDescription: jd, jobUrl, templateId }));
-    if (res) router.push(`/tailor/${res.id}`);
+    if (res) router.push(`/tailor/${res.id}${templateId ? `?template=${encodeURIComponent(templateId)}` : ""}`);
     else setPending(false);
   };
 

@@ -21,10 +21,7 @@ const FLOW = [
 function useCountUp(target: number, run: boolean, ms = 1100) {
   const [v, setV] = React.useState(0);
   React.useEffect(() => {
-    if (!run) {
-      setV(0);
-      return;
-    }
+    if (!run) return;
     let raf = 0;
     const start = performance.now();
     const tick = (t: number) => {
@@ -35,7 +32,7 @@ function useCountUp(target: number, run: boolean, ms = 1100) {
     raf = requestAnimationFrame(tick);
     return () => cancelAnimationFrame(raf);
   }, [target, run, ms]);
-  return v;
+  return run ? v : 0;
 }
 
 function Mark({ children }: { children: React.ReactNode }) {

@@ -20,6 +20,24 @@ function range(start: string, end: string, current: boolean) {
   return [start, current ? "Present" : end].filter(Boolean).join(" – ");
 }
 
+type PdfStyle = React.ComponentProps<typeof View>["style"];
+type BulletStyles = { bulletRow: PdfStyle; bulletDot: PdfStyle; bulletText: PdfStyle };
+
+function Bullets({ items, s }: { items: string[]; s: BulletStyles }) {
+  return (
+    <>
+      {items
+        .filter((b) => b.trim())
+        .map((b, i) => (
+          <View key={i} style={s.bulletRow} wrap={false}>
+            <Text style={s.bulletDot}>•</Text>
+            <Text style={s.bulletText}>{b}</Text>
+          </View>
+        ))}
+    </>
+  );
+}
+
 export function ResumePdf({ content: c, template: t }: { content: ResumeContent; template: ResumeTemplate }) {
   const sp = SPACING[t.density];
   const bodyBold = boldOf(t.pdfFonts.body);
@@ -50,19 +68,6 @@ export function ResumePdf({ content: c, template: t }: { content: ResumeContent;
     bulletText: { flex: 1 },
   });
 
-  const Bullets = ({ items }: { items: string[] }) => (
-    <>
-      {items
-        .filter((b) => b.trim())
-        .map((b, i) => (
-          <View key={i} style={s.bulletRow} wrap={false}>
-            <Text style={s.bulletDot}>•</Text>
-            <Text style={s.bulletText}>{b}</Text>
-          </View>
-        ))}
-    </>
-  );
-
   const render: Record<SectionKey, React.ReactNode> = {
     summary: <Text>{c.summary}</Text>,
     experience: c.experience.map((e) => (
@@ -75,7 +80,7 @@ export function ResumePdf({ content: c, template: t }: { content: ResumeContent;
           </Text>
           <Text style={s.muted}>{range(e.startDate, e.endDate, e.current)}</Text>
         </View>
-        <Bullets items={e.bullets} />
+        <Bullets s={s} items={e.bullets} />
       </View>
     )),
     education: c.education.map((e) => (
@@ -97,11 +102,11 @@ export function ResumePdf({ content: c, template: t }: { content: ResumeContent;
           <Text style={s.bold}>{p.name}</Text>
           {p.role ? ` — ${p.role}` : ""}
         </Text>
-        <Bullets items={p.bullets} />
+        <Bullets s={s} items={p.bullets} />
       </View>
     )),
-    certifications: <Bullets items={c.certifications.map((ct) => [ct.name, ct.issuer].filter(Boolean).join(", ") + (ct.date ? ` (${ct.date})` : ""))} />,
-    achievements: <Bullets items={c.achievements} />,
+    certifications: <Bullets s={s} items={c.certifications.map((ct) => [ct.name, ct.issuer].filter(Boolean).join(", ") + (ct.date ? ` (${ct.date})` : ""))} />,
+    achievements: <Bullets s={s} items={c.achievements} />,
     additional: <Text>{c.additional}</Text>,
   };
 

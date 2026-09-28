@@ -75,7 +75,7 @@ export const SKILLS: SkillEntry[] = [
   { name: "Compensation & Benefits", kind: "hard", aliases: ["c&b", "compensation and benefits", "total rewards"] },
   { name: "Learning & Development", kind: "hard", aliases: ["l&d", "training and development"] },
   { name: "HR Business Partnering", kind: "hard", aliases: ["hrbp", "hr business partner"] },
-  { name: "Management Consulting", kind: "hard", aliases: ["consulting", "strategy consulting", "client engagements"] },
+  { name: "Management Consulting", kind: "hard", aliases: ["strategy consulting", "consulting engagements", "client engagements"] },
   { name: "Market Sizing", kind: "hard", aliases: ["tam sam som", "market estimation"] },
   { name: "Problem Solving", kind: "soft", aliases: ["structured problem solving", "problem-solving", "hypothesis-driven"] },
   { name: "KPI Tracking", kind: "hard", aliases: ["kpis", "dashboards", "dashboarding", "metrics tracking"] },

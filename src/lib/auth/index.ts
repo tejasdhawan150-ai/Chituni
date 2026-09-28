@@ -1,6 +1,7 @@
 import "server-only";
 import { cache } from "react";
 import { redirect } from "next/navigation";
+import { connection } from "next/server";
 import { isSupabaseConfigured } from "@/lib/supabase/config";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
@@ -27,7 +28,10 @@ export const DEMO_USER: AppUser = {
 export const isDemoMode = () => !isSupabaseConfigured();
 
 export const getCurrentUser = cache(async (): Promise<AppUser | null> => {
-  if (isDemoMode()) return DEMO_USER;
+  if (isDemoMode()) {
+    await connection(); // user-specific data must never be prerendered
+    return DEMO_USER;
+  }
   const supabase = await createSupabaseServerClient();
   const { data } = await supabase.auth.getUser();
   const u = data.user;
