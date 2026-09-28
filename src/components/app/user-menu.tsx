@@ -1,10 +1,10 @@
 "use client";
 import Link from "next/link";
-import { ChevronsUpDown, CreditCard, LogOut, UserRound } from "lucide-react";
+import { ChevronsUpDown, LogOut, UserRound } from "lucide-react";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { signOutAction } from "@/server/actions/auth";
 
-export function UserMenu({ name, email, plan }: { name: string; email: string; plan: string }) {
+export function UserMenu({ name, email }: { name: string; email: string }) {
   const initials = name
     .split(/\s+/)
     .map((p) => p[0])
@@ -17,7 +17,7 @@ export function UserMenu({ name, email, plan }: { name: string; email: string; p
         <span className="grid size-8 shrink-0 place-items-center rounded-full bg-foreground text-xs font-medium text-background">{initials || "U"}</span>
         <span className="min-w-0 flex-1">
           <span className="block truncate text-sm font-medium">{name || email}</span>
-          <span className="block truncate text-xs capitalize text-muted-foreground">{plan} plan</span>
+          <span className="block truncate text-xs text-muted-foreground">{email}</span>
         </span>
         <ChevronsUpDown className="size-4 text-muted-foreground" />
       </DropdownMenuTrigger>
@@ -27,11 +27,6 @@ export function UserMenu({ name, email, plan }: { name: string; email: string; p
         <DropdownMenuItem asChild>
           <Link href="/profile">
             <UserRound /> Profile
-          </Link>
-        </DropdownMenuItem>
-        <DropdownMenuItem asChild>
-          <Link href="/settings/billing">
-            <CreditCard /> Billing
           </Link>
         </DropdownMenuItem>
         <DropdownMenuSeparator />

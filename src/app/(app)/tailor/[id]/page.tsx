@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { requireUser } from "@/lib/auth";
 import { getRepository } from "@/lib/db";
-import { hasFeature } from "@/config/pricing";
 import { profileToContent } from "@/lib/resume/schema";
 import { getTemplate } from "@/lib/resume/templates";
 import { tailorResume } from "@/lib/ai/engine";
@@ -18,7 +17,7 @@ export default async function TailorResultPage({ params, searchParams }: { param
   const repo = getRepository();
   let rec = await repo.getJobAnalysis(user.id, id);
   if (!rec) notFound();
-  const [profile, sub] = await Promise.all([repo.getProfile(user.id), repo.getSubscription(user.id)]);
+  const profile = await repo.getProfile(user.id);
   if (!profile) notFound();
   const content = profileToContent(profile);
 
@@ -29,16 +28,13 @@ export default async function TailorResultPage({ params, searchParams }: { param
     rec = { ...rec, tailoring: outcome.result, currentReport: outcome.current, projectedReport: outcome.projected };
   }
 
-  const canUsePro = hasFeature(sub.plan, "all_templates");
   const t = getTemplate(template);
   return (
     <PageContainer>
       <TailoringReview
         record={{ id: rec.id, jobDescription: rec.jobDescription, analysis: rec.analysis, tailoring: rec.tailoring!, current: rec.currentReport!, projected: rec.projectedReport! }}
         profile={content}
-        canUsePro={canUsePro}
-        advancedAts={hasFeature(sub.plan, "advanced_ats")}
-        initialTemplate={t.pro && !canUsePro ? "classic-ats" : t.id}
+        initialTemplate={t.id}
       />
     </PageContainer>
   );

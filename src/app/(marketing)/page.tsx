@@ -1,8 +1,7 @@
 import Link from "next/link";
-import { ArrowRight, BarChart3, Briefcase, ClipboardPaste, FileText, Layers, Mail, ShieldCheck, Sparkles, Target, UserRound } from "lucide-react";
+import { ArrowRight, BarChart3, Briefcase, Check, ClipboardPaste, FileText, Layers, Mail, ShieldCheck, Sparkles, Target, UserRound } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { HeroDemo } from "@/components/marketing/hero-demo";
-import { PricingCards } from "@/components/marketing/pricing-cards";
 import { FaqSection } from "@/components/marketing/faq";
 import { JsonLd } from "@/components/marketing/json-ld";
 import { TemplateThumb } from "@/components/resume/template-thumb";
@@ -11,7 +10,6 @@ import { DEMO_PROFILE } from "@/lib/demo/samples";
 import { profileToContent } from "@/lib/resume/schema";
 import { MBA_GUIDES } from "@/config/mba";
 import { siteConfig } from "@/config/site";
-import { PLANS } from "@/config/pricing";
 
 const STEPS = [
   { icon: ClipboardPaste, title: "Paste the job description", body: "Copy any job from LinkedIn, Indeed, Naukri or a careers page and paste it in." },
@@ -51,6 +49,10 @@ const HOME_FAQS = [
     a: "No. Upload your PDF or DOCX and we'll extract your experience, education and skills into your profile for you to review.",
   },
   {
+    q: "Is DreamJobResume really free?",
+    a: "Yes. Every feature is free for everyone — no trial, no credit card, no premium tier. A generous daily fair-use limit on AI actions keeps the service fast and sustainable for all users.",
+  },
+  {
     q: "Is it only for MBA graduates?",
     a: "It's built with MBA candidates in mind, but works for anyone with 0–7 years of experience applying to business roles: consulting, finance, marketing, HR, operations, product, sales and analytics.",
   },
@@ -69,7 +71,7 @@ export default function HomePage() {
           operatingSystem: "Web",
           description: siteConfig.description,
           url: siteConfig.url,
-          offers: Object.values(PLANS).map((p) => ({ "@type": "Offer", name: p.name, price: (p.monthly.INR ?? 0) / 100, priceCurrency: "INR" })),
+          offers: { "@type": "Offer", price: 0, priceCurrency: "INR" },
         }}
       />
 
@@ -323,13 +325,25 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* PRICING */}
+      {/* FREE */}
       <section className="mx-auto max-w-6xl px-5 py-24">
-        <div className="mx-auto mb-12 max-w-2xl text-center">
+        <div className="mx-auto max-w-3xl rounded-3xl border bg-card p-10 text-center shadow-[0_20px_60px_-24px_rgba(30,27,75,0.25)]">
           <p className="text-sm font-medium text-primary">Pricing</p>
-          <h2 className="mt-2 text-4xl font-semibold tracking-tight">Start free. Upgrade when you&apos;re applying seriously.</h2>
+          <h2 className="mt-2 text-4xl font-semibold tracking-tight">100% free. No credit card. No catch.</h2>
+          <p className="mx-auto mt-4 max-w-xl text-muted-foreground">Every feature is included for everyone — unlimited resumes, job tailoring, all templates, PDF & DOCX export, cover letters and LinkedIn optimization.</p>
+          <ul className="mx-auto mt-8 grid max-w-xl gap-2.5 text-left text-sm sm:grid-cols-2">
+            {["Unlimited resumes & versions", "Unlimited job tailoring", "All 13 templates", "Full ATS analysis", "AI resume rewriting", "PDF & DOCX export", "Job tracker", "Cover letters & LinkedIn optimizer"].map((x) => (
+              <li key={x} className="flex items-center gap-2">
+                <Check className="size-4 text-primary" /> {x}
+              </li>
+            ))}
+          </ul>
+          <Button size="xl" variant="dark" className="mt-10" asChild>
+            <Link href="/signup">
+              Build My Resume — Free <ArrowRight />
+            </Link>
+          </Button>
         </div>
-        <PricingCards />
       </section>
 
       <FaqSection faqs={HOME_FAQS} />

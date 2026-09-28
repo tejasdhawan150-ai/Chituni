@@ -5,17 +5,16 @@ import { z } from "zod";
 import { jobDescriptionInputSchema } from "@/lib/ai/schemas";
 import { analyzeJob, applyTailoring, tailorResume } from "@/lib/ai/engine";
 import { scoreResume } from "@/lib/ats/score";
-import { assertCanCreateResume, assertUsage } from "@/lib/billing/entitlements";
+import { assertFairUse } from "@/lib/usage";
 import { profileToContent } from "@/lib/resume/schema";
 import { getTemplate, DEFAULT_TEMPLATE_ID } from "@/lib/resume/templates";
-import { hasFeature } from "@/config/pricing";
 import { run, UserFacingError } from "../context";
 
 /** Step 4–6: analyze a pasted job description and compute tailoring recommendations. */
 export async function analyzeJobAction(input: { jobDescription: string; jobUrl?: string; templateId?: string }) {
   const res = await run(async ({ user, repo }) => {
     const { jobDescription, jobUrl } = jobDescriptionInputSchema.parse(input);
-    await assertUsage(repo, user.id, "job_analysis");
+    await assertFairUse(repo, user.id);
     const profile = await repo.getProfile(user.id);
     if (!profile || (!profile.experience.length && !profile.education.length)) {
       throw new UserFacingError("Add your experience and education to your profile first — we tailor using your real background.");
@@ -51,14 +50,12 @@ const createSchema = z.object({
 export async function createTailoredResumeAction(input: z.input<typeof createSchema>) {
   const res = await run(async ({ user, repo }) => {
     const opts = createSchema.parse(input);
-    const plan = await assertCanCreateResume(repo, user.id);
     const rec = await repo.getJobAnalysis(user.id, opts.analysisId);
     if (!rec || !rec.tailoring) throw new UserFacingError("Job analysis not found.");
     const profile = await repo.getProfile(user.id);
     if (!profile) throw new UserFacingError("Profile not found.");
 
-    const template = getTemplate(opts.templateId);
-    const templateId = template.pro && !hasFeature(plan, "all_templates") ? DEFAULT_TEMPLATE_ID : template.id;
+    const templateId = getTemplate(opts.templateId).id;
 
     const accepted = new Set(opts.acceptedBullets);
     const filtered = {

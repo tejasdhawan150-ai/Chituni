@@ -11,7 +11,6 @@ export function SiteFooter() {
       links: [
         { href: "/#how-it-works", label: "How it works" },
         { href: "/templates", label: "Resume templates" },
-        { href: "/pricing", label: "Pricing" },
         { href: "/ats-resume-checker", label: "ATS resume checker" },
         { href: "/signup", label: "Get started" },
       ],

@@ -1,6 +1,5 @@
 -- DreamJobResume initial schema
 -- Every user-owned table has Row Level Security enabled; users can only access their own rows.
--- Subscriptions are written exclusively by the server (service role) from Stripe webhooks.
 
 create extension if not exists "pgcrypto";
 
@@ -72,19 +71,7 @@ create table public.cover_letters (
 );
 create index cover_letters_user_idx on public.cover_letters (user_id, created_at desc);
 
--- ── Subscriptions (server-managed) ────────────────────────────────────────
-create table public.subscriptions (
-  user_id uuid primary key references auth.users (id) on delete cascade,
-  plan text not null default 'free' check (plan in ('free', 'pro', 'career')),
-  status text not null default 'none',
-  currency text not null default 'INR',
-  stripe_customer_id text unique,
-  stripe_subscription_id text unique,
-  current_period_end timestamptz,
-  updated_at timestamptz not null default now()
-);
-
--- ── Usage metering (plan limits) ──────────────────────────────────────────
+-- ── Usage metering (daily fair-use limit on AI actions) ──────────────────────────────────────────
 create table public.usage_events (
   id bigserial primary key,
   user_id uuid not null references auth.users (id) on delete cascade,
@@ -103,7 +90,6 @@ end $$;
 create trigger profiles_updated_at before update on public.profiles for each row execute function public.set_updated_at();
 create trigger resumes_updated_at before update on public.resumes for each row execute function public.set_updated_at();
 create trigger applications_updated_at before update on public.applications for each row execute function public.set_updated_at();
-create trigger subscriptions_updated_at before update on public.subscriptions for each row execute function public.set_updated_at();
 
 -- ── New user bootstrap ────────────────────────────────────────────────────
 create or replace function public.handle_new_user() returns trigger
@@ -111,7 +97,6 @@ language plpgsql security definer set search_path = public as $$
 begin
   insert into public.profiles (id, full_name)
   values (new.id, coalesce(new.raw_user_meta_data ->> 'full_name', new.raw_user_meta_data ->> 'name', ''));
-  insert into public.subscriptions (user_id) values (new.id);
   return new;
 end $$;
 
@@ -123,7 +108,6 @@ alter table public.job_analyses enable row level security;
 alter table public.resumes enable row level security;
 alter table public.applications enable row level security;
 alter table public.cover_letters enable row level security;
-alter table public.subscriptions enable row level security;
 alter table public.usage_events enable row level security;
 
 create policy "profiles: own row" on public.profiles for all using (auth.uid() = id) with check (auth.uid() = id);
@@ -131,8 +115,6 @@ create policy "job_analyses: own rows" on public.job_analyses for all using (aut
 create policy "resumes: own rows" on public.resumes for all using (auth.uid() = user_id) with check (auth.uid() = user_id);
 create policy "applications: own rows" on public.applications for all using (auth.uid() = user_id) with check (auth.uid() = user_id);
 create policy "cover_letters: own rows" on public.cover_letters for all using (auth.uid() = user_id) with check (auth.uid() = user_id);
--- Subscriptions: read-only for the owner. Writes happen via the service role (Stripe webhook).
-create policy "subscriptions: read own" on public.subscriptions for select using (auth.uid() = user_id);
 -- Usage: owner can read and append, never update or delete.
 create policy "usage_events: read own" on public.usage_events for select using (auth.uid() = user_id);
 create policy "usage_events: insert own" on public.usage_events for insert with check (auth.uid() = user_id);

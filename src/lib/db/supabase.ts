@@ -1,9 +1,8 @@
 import "server-only";
 import type { SupabaseClient } from "@supabase/supabase-js";
-import type { JobAnalysisRecord, Repository, Subscription } from "./types";
+import type { JobAnalysisRecord, Repository } from "./types";
 import { profileSchema, resumeContentSchema, type Application, type CoverLetter, type Resume } from "@/lib/resume/schema";
 import { jobAnalysisSchema, tailoringResultSchema } from "@/lib/ai/schemas";
-import type { PlanId } from "@/config/pricing";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
@@ -220,20 +219,6 @@ export function createSupabaseRepository(client?: SupabaseClient): Repository {
           .single(),
       );
       return toCoverLetter(data);
-    },
-
-    async getSubscription(userId): Promise<Subscription> {
-      const data = check(await (await db()).from("subscriptions").select("*").eq("user_id", userId).maybeSingle());
-      const active = data && ["active", "trialing", "past_due"].includes(data.status);
-      return {
-        userId,
-        plan: (active ? data.plan : "free") as PlanId,
-        status: data?.status ?? "none",
-        currency: data?.currency ?? "INR",
-        stripeCustomerId: data?.stripe_customer_id ?? null,
-        stripeSubscriptionId: data?.stripe_subscription_id ?? null,
-        currentPeriodEnd: data?.current_period_end ?? null,
-      };
     },
 
     async recordUsage(userId, kind) {

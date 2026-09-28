@@ -1,5 +1,5 @@
 import "server-only";
-import type { JobAnalysisRecord, NewResume, Repository, Subscription, UsageKind } from "./types";
+import type { JobAnalysisRecord, NewResume, Repository, UsageKind } from "./types";
 import type { Application, CoverLetter, Profile, Resume } from "@/lib/resume/schema";
 import { uid } from "@/lib/utils";
 import { seedDemoData } from "./seed";
@@ -16,7 +16,6 @@ interface Store {
   analyses: Map<string, JobAnalysisRecord>;
   applications: Map<string, Application>;
   coverLetters: Map<string, CoverLetter>;
-  subscriptions: Map<string, Subscription>;
   usage: { userId: string; kind: UsageKind; at: string }[];
   seeded: Set<string>;
 }
@@ -28,7 +27,6 @@ const store: Store = (g.__djrStore ??= {
   analyses: new Map(),
   applications: new Map(),
   coverLetters: new Map(),
-  subscriptions: new Map(),
   usage: [],
   seeded: new Set(),
 });
@@ -44,7 +42,6 @@ function ensureSeed(userId: string) {
   seed.resumes.forEach((r) => store.resumes.set(r.id, r));
   seed.analyses.forEach((a) => store.analyses.set(a.id, a));
   seed.applications.forEach((a) => store.applications.set(a.id, a));
-  store.subscriptions.set(userId, seed.subscription);
 }
 
 function owned<T extends { userId: string }>(map: Map<string, T>, userId: string, id: string): T | null {
@@ -162,21 +159,6 @@ export const memoryRepository: Repository = {
     const c: CoverLetter = { ...input, id: uid(), userId, createdAt: now() };
     store.coverLetters.set(c.id, c);
     return c;
-  },
-
-  async getSubscription(userId) {
-    ensureSeed(userId);
-    return (
-      store.subscriptions.get(userId) ?? {
-        userId,
-        plan: "free",
-        status: "none",
-        currency: "INR",
-        stripeCustomerId: null,
-        stripeSubscriptionId: null,
-        currentPeriodEnd: null,
-      }
-    );
   },
 
   async recordUsage(userId, kind) {

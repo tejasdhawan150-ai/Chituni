@@ -2,7 +2,7 @@
 import * as React from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Briefcase, CreditCard, FileText, LayoutDashboard, Mail, Menu, Sparkles, UserRound, X } from "lucide-react";
+import { Briefcase, FileText, LayoutDashboard, Mail, Menu, Sparkles, UserRound, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Logo } from "@/components/brand/logo";
 
@@ -18,7 +18,6 @@ export const NAV_ITEMS = [
   { href: "/cover-letter", label: "Cover Letters", icon: Mail },
   { href: "/linkedin", label: "LinkedIn Optimizer", icon: LinkedInGlyph },
   { href: "/profile", label: "Profile", icon: UserRound },
-  { href: "/settings/billing", label: "Billing", icon: CreditCard },
 ] as const;
 
 function NavLinks({ onNavigate }: { onNavigate?: () => void }) {

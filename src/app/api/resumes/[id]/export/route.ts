@@ -4,7 +4,6 @@ import { getRepository } from "@/lib/db";
 import { getTemplate } from "@/lib/resume/templates";
 import { renderResumePdf } from "@/lib/resume/pdf";
 import { renderResumeDocx } from "@/lib/resume/docx";
-import { hasFeature } from "@/config/pricing";
 import { slugify } from "@/lib/utils";
 
 export const runtime = "nodejs";
@@ -18,10 +17,6 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
   const resume = await repo.getResume(user.id, id);
   if (!resume) return NextResponse.json({ error: "Not found" }, { status: 404 });
 
-  const plan = (await repo.getSubscription(user.id)).plan;
-  if (format === "docx" && !hasFeature(plan, "docx_export")) {
-    return NextResponse.json({ error: "DOCX export is available on Pro." }, { status: 402 });
-  }
   const template = getTemplate(resume.templateId);
   const name = slugify(`${resume.content.basics.fullName || "resume"}-${resume.targetCompany || resume.title}`) || "resume";
 

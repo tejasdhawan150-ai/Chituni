@@ -1,7 +1,7 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { updateSupabaseSession } from "@/lib/supabase/proxy";
 
-const PROTECTED = ["/dashboard", "/onboarding", "/profile", "/resumes", "/tailor", "/applications", "/cover-letter", "/linkedin", "/settings"];
+const PROTECTED = ["/dashboard", "/onboarding", "/profile", "/resumes", "/tailor", "/applications", "/cover-letter", "/linkedin"];
 
 export async function proxy(request: NextRequest) {
   // Demo mode (no Supabase): everything is accessible with a demo user.

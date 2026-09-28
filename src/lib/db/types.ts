@@ -1,6 +1,5 @@
 import type { JobAnalysis, TailoringResult } from "@/lib/ai/schemas";
 import type { AtsReport } from "@/lib/ats/score";
-import type { PlanId } from "@/config/pricing";
 import type { Application, ApplicationInput, CoverLetter, Profile, Resume, ResumeContent } from "@/lib/resume/schema";
 
 export interface JobAnalysisRecord {
@@ -13,16 +12,6 @@ export interface JobAnalysisRecord {
   currentReport: AtsReport | null;
   projectedReport: AtsReport | null;
   createdAt: string;
-}
-
-export interface Subscription {
-  userId: string;
-  plan: PlanId;
-  status: "active" | "trialing" | "past_due" | "canceled" | "incomplete" | "none";
-  currency: string;
-  stripeCustomerId: string | null;
-  stripeSubscriptionId: string | null;
-  currentPeriodEnd: string | null;
 }
 
 export type UsageKind = "job_analysis" | "ai_rewrite" | "cover_letter" | "linkedin" | "resume_parse";
@@ -66,8 +55,6 @@ export interface Repository {
 
   listCoverLetters(userId: string): Promise<CoverLetter[]>;
   createCoverLetter(userId: string, input: Omit<CoverLetter, "id" | "userId" | "createdAt">): Promise<CoverLetter>;
-
-  getSubscription(userId: string): Promise<Subscription>;
 
   recordUsage(userId: string, kind: UsageKind): Promise<void>;
   countUsageSince(userId: string, kind: UsageKind, sinceIso: string): Promise<number>;

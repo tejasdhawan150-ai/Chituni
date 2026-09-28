@@ -2,7 +2,6 @@
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import { applicationInputSchema, APPLICATION_STATUSES, type ApplicationInput } from "@/lib/resume/schema";
-import { assertFeature } from "@/lib/billing/entitlements";
 import { run, UserFacingError } from "../context";
 
 async function resumeScore(repo: import("@/lib/db").Repository, userId: string, resumeId: string | null) {
@@ -14,7 +13,6 @@ async function resumeScore(repo: import("@/lib/db").Repository, userId: string, 
 
 export async function createApplicationAction(input: ApplicationInput) {
   return run(async ({ user, repo }) => {
-    await assertFeature(repo, user.id, "job_tracker");
     const data = applicationInputSchema.parse(input);
     const app = await repo.createApplication(user.id, { ...data, atsScore: await resumeScore(repo, user.id, data.resumeId) });
     revalidatePath("/applications");
@@ -25,7 +23,6 @@ export async function createApplicationAction(input: ApplicationInput) {
 
 export async function updateApplicationAction(id: string, input: Partial<ApplicationInput>) {
   return run(async ({ user, repo }) => {
-    await assertFeature(repo, user.id, "job_tracker");
     const patch = applicationInputSchema.partial().parse(input);
     const atsScore = patch.resumeId !== undefined ? await resumeScore(repo, user.id, patch.resumeId) : undefined;
     const app = await repo.updateApplication(user.id, id, { ...patch, ...(atsScore !== undefined ? { atsScore } : {}) });

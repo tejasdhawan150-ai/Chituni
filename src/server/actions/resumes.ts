@@ -5,8 +5,6 @@ import { z } from "zod";
 import { profileToContent, resumeContentSchema, emptyContent } from "@/lib/resume/schema";
 import { getTemplate, DEFAULT_TEMPLATE_ID } from "@/lib/resume/templates";
 import { scoreResume } from "@/lib/ats/score";
-import { assertCanCreateResume, assertFeature, getPlan } from "@/lib/billing/entitlements";
-import { hasFeature } from "@/config/pricing";
 import { run, UserFacingError } from "../context";
 
 const saveSchema = z.object({
@@ -24,9 +22,6 @@ export async function saveResumeAction(input: z.input<typeof saveSchema>) {
     const existing = await repo.getResume(user.id, data.id);
     if (!existing) throw new UserFacingError("Resume not found.");
     const template = getTemplate(data.templateId);
-    if (template.pro && !hasFeature(await getPlan(repo, user.id), "all_templates")) {
-      throw new UserFacingError(`${template.name} is a Pro template. Upgrade to use all templates.`);
-    }
     let atsScore = existing.atsScore;
     if (existing.jobAnalysisId) {
       const rec = await repo.getJobAnalysis(user.id, existing.jobAnalysisId);
@@ -48,12 +43,10 @@ export async function saveResumeAction(input: z.input<typeof saveSchema>) {
 
 export async function createResumeFromProfileAction(templateId: string = DEFAULT_TEMPLATE_ID) {
   const res = await run(async ({ user, repo }) => {
-    const plan = await assertCanCreateResume(repo, user.id);
     const profile = await repo.getProfile(user.id);
-    const t = getTemplate(templateId);
     const r = await repo.createResume(user.id, {
       title: "General Resume",
-      templateId: t.pro && !hasFeature(plan, "all_templates") ? DEFAULT_TEMPLATE_ID : t.id,
+      templateId: getTemplate(templateId).id,
       content: profile ? profileToContent(profile) : emptyContent(),
     });
     return { id: r.id };
@@ -64,8 +57,6 @@ export async function createResumeFromProfileAction(templateId: string = DEFAULT
 
 export async function duplicateResumeAction(id: string) {
   const res = await run(async ({ user, repo }) => {
-    await assertFeature(repo, user.id, "resume_versions");
-    await assertCanCreateResume(repo, user.id);
     const r = await repo.getResume(user.id, id);
     if (!r) throw new UserFacingError("Resume not found.");
     const copy = await repo.createResume(user.id, {

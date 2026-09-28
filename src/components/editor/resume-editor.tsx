@@ -2,7 +2,6 @@
 import * as React from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { toast } from "sonner";
 import {
   ArrowLeft,
   Check,
@@ -12,7 +11,6 @@ import {
   FileText,
   Lightbulb,
   LoaderCircle,
-  Lock,
   Mail,
   Plus,
   Save,
@@ -50,7 +48,6 @@ export interface EditorProps {
   analysis: JobAnalysis | null;
   profileSkills: string[];
   mbaSpecialization: string;
-  entitlements: { allTemplates: boolean; docx: boolean; versions: boolean; advancedAts: boolean; coverLetter: boolean };
 }
 
 type SaveState = "saved" | "dirty" | "saving" | "error";
@@ -64,7 +61,7 @@ function F({ label, children, className }: { label: string; children: React.Reac
   );
 }
 
-export function ResumeEditor({ resume, analysis, profileSkills, mbaSpecialization, entitlements }: EditorProps) {
+export function ResumeEditor({ resume, analysis, profileSkills, mbaSpecialization }: EditorProps) {
   const router = useRouter();
   const [content, setContent] = React.useState<ResumeContent>(resume.content);
   const [meta, setMeta] = React.useState({ title: resume.title, templateId: resume.templateId, targetRole: resume.targetRole, targetCompany: resume.targetCompany });
@@ -138,10 +135,6 @@ export function ResumeEditor({ resume, analysis, profileSkills, mbaSpecializatio
   ].filter(Boolean) as string[];
 
   const download = (format: "pdf" | "docx") => {
-    if (format === "docx" && !entitlements.docx) {
-      toast.error("DOCX export is available on Pro.", { action: { label: "Upgrade", onClick: () => router.push("/settings/billing") } });
-      return;
-    }
     const go = () => downloadFile(`/api/resumes/${resume.id}/export?format=${format}`);
     if (save !== "saved") doSave().then(go);
     else go();
@@ -361,7 +354,7 @@ export function ResumeEditor({ resume, analysis, profileSkills, mbaSpecializatio
           <BreakdownBars report={report} />
           <div>
             <div className="mb-1.5 text-xs font-medium">Missing Keywords</div>
-            <KeywordChips items={report.missingKeywords} tone="bad" max={entitlements.advancedAts ? 14 : 5} />
+            <KeywordChips items={report.missingKeywords} tone="bad" max={14} />
           </div>
           <div>
             <div className="mb-1.5 text-xs font-medium">Strong Matches</div>
@@ -369,7 +362,7 @@ export function ResumeEditor({ resume, analysis, profileSkills, mbaSpecializatio
           </div>
           <div>
             <div className="mb-1.5 text-xs font-medium">Checks</div>
-            <AtsChecks report={report} advanced={entitlements.advancedAts} />
+            <AtsChecks report={report} />
           </div>
           <AtsDisclaimer />
         </>
@@ -459,13 +452,12 @@ export function ResumeEditor({ resume, analysis, profileSkills, mbaSpecializatio
             <DropdownMenuContent align="end">
               <DropdownMenuItem
                 onSelect={async () => {
-                  if (!entitlements.versions) return void toast.error("Resume versions are available on Pro.", { action: { label: "Upgrade", onClick: () => router.push("/settings/billing") } });
                   await doSave();
                   const res = await duplicateResumeAction(resume.id);
                   if (res && !res.ok) unwrap(res);
                 }}
               >
-                <Copy /> Duplicate Resume {!entitlements.versions && <Lock className="ml-auto" />}
+                <Copy /> Duplicate Resume
               </DropdownMenuItem>
               <DropdownMenuItem asChild>
                 <Link href="/tailor">
@@ -474,7 +466,7 @@ export function ResumeEditor({ resume, analysis, profileSkills, mbaSpecializatio
               </DropdownMenuItem>
               <DropdownMenuItem asChild>
                 <Link href={`/cover-letter?resume=${resume.id}`}>
-                  <Mail /> Create Cover Letter {!entitlements.coverLetter && <Lock className="ml-auto" />}
+                  <Mail /> Create Cover Letter
                 </Link>
               </DropdownMenuItem>
               <DropdownMenuSeparator />
@@ -501,7 +493,7 @@ export function ResumeEditor({ resume, analysis, profileSkills, mbaSpecializatio
                 <FileText /> Download PDF
               </DropdownMenuItem>
               <DropdownMenuItem onSelect={() => download("docx")}>
-                <FileText /> Download DOCX {!entitlements.docx && <Lock className="ml-auto" />}
+                <FileText /> Download DOCX
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
@@ -544,7 +536,6 @@ export function ResumeEditor({ resume, analysis, profileSkills, mbaSpecializatio
               setTemplateOpen(false);
             }}
             content={content}
-            canUsePro={entitlements.allTemplates}
             columns="grid-cols-2 sm:grid-cols-3 md:grid-cols-4"
           />
         </DialogContent>

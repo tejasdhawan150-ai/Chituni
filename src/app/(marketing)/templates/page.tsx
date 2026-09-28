@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { TemplateThumb } from "@/components/resume/template-thumb";
 import { TEMPLATES, TEMPLATE_CATEGORIES } from "@/lib/resume/templates";
@@ -31,10 +30,7 @@ export default function TemplatesPage() {
             {TEMPLATES.filter((t) => t.category === cat.id).map((t) => (
               <div key={t.id}>
                 <TemplateThumb content={content} template={t} />
-                <div className="mt-3 flex items-center justify-between">
-                  <span className="text-sm font-medium">{t.name}</span>
-                  {t.pro ? <Badge variant="dark">Pro</Badge> : <Badge variant="success">Free</Badge>}
-                </div>
+                <div className="mt-3 text-sm font-medium">{t.name}</div>
                 <p className="mt-1 text-xs text-muted-foreground">{t.description}</p>
               </div>
             ))}

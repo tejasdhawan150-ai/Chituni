@@ -8,7 +8,7 @@ import { TemplatePicker } from "@/components/resume/template-picker";
 import { TailorForm } from "./tailor-form";
 
 /** Steps 3–4: choose a template, paste the job description, analyze. */
-export function TailorStart({ content, canUsePro, defaultTemplate }: { content: ResumeContent; canUsePro: boolean; defaultTemplate: string }) {
+export function TailorStart({ content, defaultTemplate }: { content: ResumeContent; defaultTemplate: string }) {
   const [templateId, setTemplateId] = React.useState(defaultTemplate);
   const [showTemplates, setShowTemplates] = React.useState(false);
   const t = getTemplate(templateId);
@@ -38,7 +38,7 @@ export function TailorStart({ content, canUsePro, defaultTemplate }: { content: 
         </div>
         {showTemplates && (
           <div className="mt-6">
-            <TemplatePicker value={templateId} onChange={setTemplateId} content={content} canUsePro={canUsePro} />
+            <TemplatePicker value={templateId} onChange={setTemplateId} content={content} />
             <p className="mt-4 text-xs text-muted-foreground">All templates are single-column and ATS-safe. You can switch later without losing content.</p>
           </div>
         )}

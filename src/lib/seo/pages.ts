@@ -62,15 +62,15 @@ export const INTENT_PAGES: SeoPage[] = [
     slug: "ai-resume-builder-india",
     path: "/ai-resume-builder-india",
     metaTitle: "AI Resume Builder India — ATS Resumes for Indian Job Seekers | DreamJobResume",
-    metaDescription: "An AI resume builder made for India: tailor resumes for Naukri, LinkedIn and campus placements. INR pricing, MBA-friendly templates.",
+    metaDescription: "An AI resume builder made for India: tailor resumes for Naukri, LinkedIn and campus placements. 100% free, MBA-friendly templates.",
     eyebrow: "Made for India",
     h1: "AI resume builder for Indian job seekers",
     intro:
-      "From campus placements to lateral moves, Indian recruiters screen hundreds of resumes per role. DreamJobResume helps you tailor yours for each application on Naukri, LinkedIn, Instahyre or company portals — with pricing in INR.",
+      "From campus placements to lateral moves, Indian recruiters screen hundreds of resumes per role. DreamJobResume helps you tailor yours for each application on Naukri, LinkedIn, Instahyre or company portals — completely free.",
     benefits: [
       { title: "Works with Naukri & LinkedIn JDs", body: "Paste any job description; we extract skills, experience requirements and keywords in seconds." },
       { title: "MBA & PGDM aware", body: "Templates and guidance built for PGDM/MBA candidates, including education-first layouts for placements." },
-      { title: "Priced in rupees", body: "Start free. Pro is ₹499/month — cancel any time." },
+      { title: "Completely free", body: "Every feature, free for everyone. No credit card, no trial." },
     ],
     faqs: [
       ...COMMON_FAQS,
@@ -204,15 +204,15 @@ export const INTENT_PAGES: SeoPage[] = [
     slug: "cv-builder-india",
     path: "/cv-builder-india",
     metaTitle: "CV Builder India — ATS-Friendly CVs for Indian Jobs | DreamJobResume",
-    metaDescription: "Free CV builder for India. Tailor your CV to jobs on Naukri, LinkedIn and company portals. MBA and fresher friendly. Pricing in INR.",
+    metaDescription: "Free CV builder for India. Tailor your CV to jobs on Naukri, LinkedIn and company portals. MBA and fresher friendly.",
     eyebrow: "CV builder India",
     h1: "The CV builder for India's job market",
     intro:
-      "Whether you call it a CV or a resume, Indian recruiters want the same thing: relevant skills, clear achievements and a format their ATS can read. DreamJobResume delivers all three — starting free.",
+      "Whether you call it a CV or a resume, Indian recruiters want the same thing: relevant skills, clear achievements and a format their ATS can read. DreamJobResume delivers all three — for free.",
     benefits: [
       { title: "Fresher to 7 years", body: "Formats for campus placements, first jobs and lateral moves." },
       { title: "Indian context", body: "Handles CGPA, PGDM/PGP degrees, ₹ figures and Indian phone formats." },
-      { title: "Free to start", body: "1 resume and 2 job analyses free. Upgrade only when you need more." },
+      { title: "100% free", body: "Unlimited resumes and job tailoring. No credit card, ever." },
     ],
     faqs: COMMON_FAQS,
     related: ["/ai-resume-builder-india", "/resume-builder/freshers", "/mba-resume-builder"],

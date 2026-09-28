@@ -1,4 +1,4 @@
-import type { JobAnalysisRecord, Subscription } from "./types";
+import type { JobAnalysisRecord } from "./types";
 import type { Application, Profile, Resume } from "@/lib/resume/schema";
 import { profileToContent } from "@/lib/resume/schema";
 import { DEMO_PROFILE, SAMPLE_JD_ACCENTURE, SAMPLE_JD_DELOITTE, SAMPLE_JD_PG } from "@/lib/demo/samples";
@@ -82,15 +82,5 @@ export function seedDemoData(userId: string) {
     updatedAt: r.updatedAt,
   }));
 
-  const subscription: Subscription = {
-    userId,
-    plan: "career",
-    status: "active",
-    currency: "INR",
-    stripeCustomerId: null,
-    stripeSubscriptionId: null,
-    currentPeriodEnd: null,
-  };
-
-  return { profile, resumes, analyses, applications, subscription };
+  return { profile, resumes, analyses, applications };
 }

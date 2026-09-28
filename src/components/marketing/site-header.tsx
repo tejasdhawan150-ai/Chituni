@@ -11,7 +11,6 @@ const NAV = [
   { href: "/templates", label: "Templates" },
   { href: "/mba-resume-builder", label: "For MBAs" },
   { href: "/ats-resume-checker", label: "ATS Checker" },
-  { href: "/pricing", label: "Pricing" },
 ];
 
 export function SiteHeader() {

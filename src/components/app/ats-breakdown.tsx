@@ -1,5 +1,4 @@
-import Link from "next/link";
-import { CircleCheck, CircleAlert, Info, Lock } from "lucide-react";
+import { CircleCheck, CircleAlert, Info } from "lucide-react";
 import type { AtsReport } from "@/lib/ats/score";
 import { ATS_DISCLAIMER } from "@/lib/ats/score";
 import { cn } from "@/lib/utils";
@@ -54,19 +53,7 @@ export function KeywordChips({ items, tone, max }: { items: string[]; tone: "goo
   );
 }
 
-export function AtsChecks({ report, advanced }: { report: AtsReport; advanced: boolean }) {
-  if (!advanced) {
-    return (
-      <div className="flex items-center justify-between rounded-lg border border-dashed p-3 text-xs text-muted-foreground">
-        <span className="flex items-center gap-1.5">
-          <Lock className="size-3.5" /> Detailed formatting checks are part of Advanced ATS analysis.
-        </span>
-        <Link href="/settings/billing" className="font-medium text-primary hover:underline">
-          Upgrade
-        </Link>
-      </div>
-    );
-  }
+export function AtsChecks({ report }: { report: AtsReport }) {
   return (
     <ul className="space-y-1.5">
       {report.checks.map((c) => (

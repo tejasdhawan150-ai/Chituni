@@ -2,13 +2,13 @@
 import { revalidatePath } from "next/cache";
 import { coverLetterRequestSchema, linkedinRequestSchema, type CoverLetterRequest, type LinkedInRequest } from "@/lib/ai/schemas";
 import { generateCoverLetter, optimizeLinkedIn } from "@/lib/ai/engine";
-import { assertFeature } from "@/lib/billing/entitlements";
+import { assertFairUse } from "@/lib/usage";
 import { profileToContent } from "@/lib/resume/schema";
 import { run, UserFacingError } from "../context";
 
 export async function generateCoverLetterAction(input: CoverLetterRequest) {
   return run(async ({ user, repo }) => {
-    await assertFeature(repo, user.id, "cover_letter");
+    await assertFairUse(repo, user.id);
     const req = coverLetterRequestSchema.parse(input);
     let content;
     if (req.resumeId) {
@@ -30,7 +30,7 @@ export async function generateCoverLetterAction(input: CoverLetterRequest) {
 
 export async function optimizeLinkedInAction(input: LinkedInRequest) {
   return run(async ({ user, repo }) => {
-    await assertFeature(repo, user.id, "linkedin_optimization");
+    await assertFairUse(repo, user.id);
     const req = linkedinRequestSchema.parse(input);
     const profile = await repo.getProfile(user.id);
     if (!profile) throw new UserFacingError("Complete your profile first — we only use your real experience.");

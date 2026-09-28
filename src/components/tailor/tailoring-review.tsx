@@ -20,8 +20,6 @@ import { cn } from "@/lib/utils";
 interface Props {
   record: { id: string; jobDescription: string; analysis: JobAnalysis; tailoring: TailoringResult; current: AtsReport; projected: AtsReport };
   profile: ResumeContent;
-  canUsePro: boolean;
-  advancedAts: boolean;
   initialTemplate: string;
 }
 
@@ -45,7 +43,7 @@ function years(a: JobAnalysis) {
   return `${min ?? 0}+ years`;
 }
 
-export function TailoringReview({ record, profile, canUsePro, advancedAts, initialTemplate }: Props) {
+export function TailoringReview({ record, profile, initialTemplate }: Props) {
   const { analysis: a, tailoring: t, current, projected } = record;
   const [templateId, setTemplateId] = React.useState(initialTemplate);
   const [applySummary, setApplySummary] = React.useState(!!t.summary);
@@ -136,11 +134,11 @@ export function TailoringReview({ record, profile, canUsePro, advancedAts, initi
             <div className="space-y-4">
               <div>
                 <h3 className="mb-2 text-sm font-medium">Strong Matches</h3>
-                <KeywordChips items={projected.strongMatches} tone="good" max={advancedAts ? undefined : 8} />
+                <KeywordChips items={projected.strongMatches} tone="good" />
               </div>
               <div>
                 <h3 className="mb-2 text-sm font-medium">Missing Keywords</h3>
-                <KeywordChips items={projected.missingKeywords} tone="bad" max={advancedAts ? undefined : 5} />
+                <KeywordChips items={projected.missingKeywords} tone="bad" />
               </div>
             </div>
           </div>
@@ -346,14 +344,14 @@ export function TailoringReview({ record, profile, canUsePro, advancedAts, initi
           )}
           <Card className="p-5">
             <div className="mb-3 text-sm font-medium">Formatting checks (projected)</div>
-            <AtsChecks report={projected} advanced={advancedAts} />
+            <AtsChecks report={projected} />
           </Card>
         </div>
       </section>
 
       <section>
         <h2 className="mb-4 text-lg font-semibold">Choose a template</h2>
-        <TemplatePicker value={templateId} onChange={setTemplateId} content={profile} canUsePro={canUsePro} columns="grid-cols-2 sm:grid-cols-4 lg:grid-cols-6" />
+        <TemplatePicker value={templateId} onChange={setTemplateId} content={profile} columns="grid-cols-2 sm:grid-cols-4 lg:grid-cols-6" />
       </section>
 
       {/* Sticky CTA */}
