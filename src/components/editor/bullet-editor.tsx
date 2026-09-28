@@ -101,6 +101,7 @@ function BulletRow({
       {suggestion && (
         <div className="mb-2.5 rounded-md border border-primary/20 bg-accent/40 p-2.5">
           {suggestion.text !== value && <p className="text-[13px] leading-relaxed">{suggestion.text}</p>}
+          {suggestion.text === value && suggestion.notes.length === 0 && <p className="text-xs text-muted-foreground">This bullet already reads well — no changes suggested.</p>}
           {suggestion.notes.map((n) => (
             <p key={n} className={cn("text-xs text-muted-foreground", suggestion.text !== value && "mt-1.5")}>
               {n}
