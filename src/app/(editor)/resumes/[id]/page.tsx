@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { requireUser } from "@/lib/auth";
+import { isDemoMode, requireUser } from "@/lib/auth";
+import { DemoMissing } from "@/components/app/demo-missing";
 import { getRepository } from "@/lib/db";
 import { ResumeEditor } from "@/components/editor/resume-editor";
 
@@ -11,7 +12,10 @@ export default async function ResumeEditorPage({ params }: { params: Promise<{ i
   const { id } = await params;
   const repo = getRepository();
   const resume = await repo.getResume(user.id, id);
-  if (!resume) notFound();
+  if (!resume) {
+    if (isDemoMode()) return <DemoMissing thing="resume" href="/resumes" cta="Back to my resumes" />;
+    notFound();
+  }
   const [profile, rec] = await Promise.all([
     repo.getProfile(user.id),
     resume.jobAnalysisId ? repo.getJobAnalysis(user.id, resume.jobAnalysisId) : Promise.resolve(null),

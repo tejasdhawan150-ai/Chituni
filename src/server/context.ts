@@ -4,9 +4,15 @@ import { requireUser, type AppUser } from "@/lib/auth";
 import { getRepository, type Repository } from "@/lib/db";
 import { AIError } from "@/lib/ai/provider";
 import type { ActionResult } from "./action-result";
-import { UserFacingError } from "@/lib/errors";
+import { UserFacingError, notFoundMessage } from "@/lib/errors";
+import { isSupabaseConfigured } from "@/lib/supabase/config";
 
 export { UserFacingError };
+
+/** User-facing "not found" error (explains demo-mode resets). */
+export function missing(thing: string) {
+  return new UserFacingError(notFoundMessage(thing, !isSupabaseConfigured()));
+}
 
 export interface Ctx {
   user: AppUser;

@@ -8,7 +8,7 @@ import { scoreResume } from "@/lib/ats/score";
 import { assertFairUse } from "@/lib/usage";
 import { profileToContent } from "@/lib/resume/schema";
 import { getTemplate, DEFAULT_TEMPLATE_ID } from "@/lib/resume/templates";
-import { run, UserFacingError } from "../context";
+import { missing, run, UserFacingError } from "../context";
 
 /** Step 4–6: analyze a pasted job description and compute tailoring recommendations. */
 export async function analyzeJobAction(input: { jobDescription: string; jobUrl?: string; templateId?: string }) {
@@ -51,7 +51,7 @@ export async function createTailoredResumeAction(input: z.input<typeof createSch
   const res = await run(async ({ user, repo }) => {
     const opts = createSchema.parse(input);
     const rec = await repo.getJobAnalysis(user.id, opts.analysisId);
-    if (!rec || !rec.tailoring) throw new UserFacingError("Job analysis not found.");
+    if (!rec || !rec.tailoring) throw missing("job analysis");
     const profile = await repo.getProfile(user.id);
     if (!profile) throw new UserFacingError("Profile not found.");
 
