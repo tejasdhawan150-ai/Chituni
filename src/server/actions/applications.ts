@@ -2,12 +2,12 @@
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import { applicationInputSchema, APPLICATION_STATUSES, type ApplicationInput } from "@/lib/resume/schema";
-import { run, UserFacingError } from "../context";
+import { missing, run } from "../context";
 
 async function resumeScore(repo: import("@/lib/db").Repository, userId: string, resumeId: string | null) {
   if (!resumeId) return null;
   const r = await repo.getResume(userId, resumeId);
-  if (!r) throw new UserFacingError("Linked resume not found.");
+  if (!r) throw missing("linked resume");
   return r.atsScore;
 }
 
@@ -26,7 +26,7 @@ export async function updateApplicationAction(id: string, input: Partial<Applica
     const patch = applicationInputSchema.partial().parse(input);
     const atsScore = patch.resumeId !== undefined ? await resumeScore(repo, user.id, patch.resumeId) : undefined;
     const app = await repo.updateApplication(user.id, id, { ...patch, ...(atsScore !== undefined ? { atsScore } : {}) });
-    if (!app) throw new UserFacingError("Application not found.");
+    if (!app) throw missing("application");
     revalidatePath("/applications");
     revalidatePath("/dashboard");
     return app;

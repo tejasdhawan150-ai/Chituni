@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { requireUser } from "@/lib/auth";
+import { isDemoMode, requireUser } from "@/lib/auth";
+import { DemoMissing } from "@/components/app/demo-missing";
 import { getRepository } from "@/lib/db";
 import { profileToContent } from "@/lib/resume/schema";
 import { getTemplate } from "@/lib/resume/templates";
@@ -16,7 +17,10 @@ export default async function TailorResultPage({ params, searchParams }: { param
   const { template } = await searchParams;
   const repo = getRepository();
   let rec = await repo.getJobAnalysis(user.id, id);
-  if (!rec) notFound();
+  if (!rec) {
+    if (isDemoMode()) return <DemoMissing thing="job analysis" href="/tailor" cta="Paste the job again" />;
+    notFound();
+  }
   const profile = await repo.getProfile(user.id);
   if (!profile) notFound();
   const content = profileToContent(profile);

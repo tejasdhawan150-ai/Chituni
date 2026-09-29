@@ -4,7 +4,7 @@ import { coverLetterRequestSchema, linkedinRequestSchema, type CoverLetterReques
 import { generateCoverLetter, optimizeLinkedIn } from "@/lib/ai/engine";
 import { assertFairUse } from "@/lib/usage";
 import { profileToContent } from "@/lib/resume/schema";
-import { run, UserFacingError } from "../context";
+import { missing, run, UserFacingError } from "../context";
 
 export async function generateCoverLetterAction(input: CoverLetterRequest) {
   return run(async ({ user, repo }) => {
@@ -13,7 +13,7 @@ export async function generateCoverLetterAction(input: CoverLetterRequest) {
     let content;
     if (req.resumeId) {
       const r = await repo.getResume(user.id, req.resumeId);
-      if (!r) throw new UserFacingError("Resume not found.");
+      if (!r) throw missing("resume");
       content = r.content;
     } else {
       const p = await repo.getProfile(user.id);

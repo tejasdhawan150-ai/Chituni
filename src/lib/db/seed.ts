@@ -4,25 +4,28 @@ import { profileToContent } from "@/lib/resume/schema";
 import { DEMO_PROFILE, SAMPLE_JD_ACCENTURE, SAMPLE_JD_DELOITTE, SAMPLE_JD_PG } from "@/lib/demo/samples";
 import { heuristicJobAnalysis } from "@/lib/ats/extract";
 import { scoreResume } from "@/lib/ats/score";
-import { uid } from "@/lib/utils";
 
 const daysAgo = (d: number) => new Date(Date.now() - d * 86_400_000).toISOString();
 
-/** Seed data for demo mode. */
+/**
+ * Seed data for demo mode. IDs are fixed (not random) so that links to the
+ * sample data work on every server instance, e.g. across Vercel serverless
+ * functions that don't share memory.
+ */
 export function seedDemoData(userId: string) {
   const profile: Profile = structuredClone(DEMO_PROFILE);
   const content = profileToContent(profile);
 
   const jobs = [
-    { jd: SAMPLE_JD_DELOITTE, template: "consulting", age: 1 },
-    { jd: SAMPLE_JD_PG, template: "marketing", age: 3 },
-    { jd: SAMPLE_JD_ACCENTURE, template: "corporate", age: 6 },
+    { key: "deloitte", jd: SAMPLE_JD_DELOITTE, template: "consulting", age: 1 },
+    { key: "pg", jd: SAMPLE_JD_PG, template: "marketing", age: 3 },
+    { key: "accenture", jd: SAMPLE_JD_ACCENTURE, template: "corporate", age: 6 },
   ];
 
   const analyses: JobAnalysisRecord[] = [];
   const resumes: Resume[] = [
     {
-      id: uid(),
+      id: "demo-resume-general",
       userId,
       title: "General MBA Resume",
       templateId: "mba-professional",
@@ -40,7 +43,7 @@ export function seedDemoData(userId: string) {
     const analysis = heuristicJobAnalysis(j.jd);
     const report = scoreResume(content, analysis);
     const rec: JobAnalysisRecord = {
-      id: uid(),
+      id: `demo-analysis-${j.key}`,
       userId,
       jobDescription: j.jd,
       jobUrl: "",
@@ -52,7 +55,7 @@ export function seedDemoData(userId: string) {
     };
     analyses.push(rec);
     resumes.push({
-      id: uid(),
+      id: `demo-resume-${j.key}`,
       userId,
       title: `${analysis.job_title} — ${analysis.company}`,
       templateId: j.template,
@@ -68,7 +71,7 @@ export function seedDemoData(userId: string) {
 
   const statuses: Application["status"][] = ["interview", "applied", "saved"];
   const applications: Application[] = resumes.slice(1).map((r, i) => ({
-    id: uid(),
+    id: `demo-application-${i + 1}`,
     userId,
     company: r.targetCompany,
     role: r.targetRole,

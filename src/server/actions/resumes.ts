@@ -5,7 +5,7 @@ import { z } from "zod";
 import { profileToContent, resumeContentSchema, emptyContent } from "@/lib/resume/schema";
 import { getTemplate, DEFAULT_TEMPLATE_ID } from "@/lib/resume/templates";
 import { scoreResume } from "@/lib/ats/score";
-import { run, UserFacingError } from "../context";
+import { missing, run } from "../context";
 
 const saveSchema = z.object({
   id: z.string().min(1),
@@ -20,7 +20,7 @@ export async function saveResumeAction(input: z.input<typeof saveSchema>) {
   return run(async ({ user, repo }) => {
     const data = saveSchema.parse(input);
     const existing = await repo.getResume(user.id, data.id);
-    if (!existing) throw new UserFacingError("Resume not found.");
+    if (!existing) throw missing("resume");
     const template = getTemplate(data.templateId);
     let atsScore = existing.atsScore;
     if (existing.jobAnalysisId) {
@@ -58,7 +58,7 @@ export async function createResumeFromProfileAction(templateId: string = DEFAULT
 export async function duplicateResumeAction(id: string) {
   const res = await run(async ({ user, repo }) => {
     const r = await repo.getResume(user.id, id);
-    if (!r) throw new UserFacingError("Resume not found.");
+    if (!r) throw missing("resume");
     const copy = await repo.createResume(user.id, {
       title: `${r.title} (copy)`,
       templateId: r.templateId,
