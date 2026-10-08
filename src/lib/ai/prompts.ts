@@ -72,61 +72,6 @@ ${jd.slice(0, 8000)}
 """`;
 }
 
-const ACTION_INSTRUCTIONS = {
-  improve: "Improve clarity, grammar and flow. Start with a strong action verb.",
-  impactful: "Make it more impactful and results-oriented: lead with the outcome, use a strong action verb, emphasise scope and ownership. Only use numbers that already exist in the text.",
-  keywords: "Weave in relevant job keywords ONLY where they truthfully describe the same work. Do not add skills the text doesn't support.",
-  shorten: "Shorten to under 22 words while keeping every fact and number.",
-  ats: "Make it ATS-friendly: plain language, standard terminology, spell out acronyms once when useful, no special characters or symbols, start with an action verb.",
-} as const;
-
-export function rewritePrompt(text: string, action: keyof typeof ACTION_INSTRUCTIONS, role: string, keywords: string[], userSkills: string[]) {
-  return `Rewrite this resume bullet.
-Instruction: ${ACTION_INSTRUCTIONS[action]}
-${role ? `Target role: ${role}` : ""}
-${keywords.length ? `Relevant job keywords (use only if truthful): ${keywords.join(", ")}` : ""}
-${userSkills.length ? `Candidate's real skills: ${userSkills.join(", ")}` : ""}
-Return JSON: { "text": string, "notes": string[] }  // notes: up to 2 short tips, e.g. "Add a metric if you have one".
-
-BULLET:
-"""${text}"""`;
-}
-
-export function coverLetterPrompt(resumeJson: string, jd: string, company: string, role: string, tone: string) {
-  return `Write a tailored cover letter (250-350 words, ${tone} tone) for the candidate applying to ${role || "the role"}${company ? ` at ${company}` : ""}.
-Use ONLY facts from the candidate resume and the job description. Do not invent company facts, values, news, products or candidate achievements. No placeholders like [Company Name] — if something is unknown, write around it.
-Structure: greeting ("Dear Hiring Manager,"), opening with the role, 2 body paragraphs connecting real experience to the job requirements, closing paragraph, sign-off with the candidate's name.
-Return JSON: { "body": string } with paragraphs separated by blank lines.
-
-CANDIDATE RESUME (JSON):
-${resumeJson}
-
-JOB DESCRIPTION:
-"""
-${jd.slice(0, 8000)}
-"""`;
-}
-
-export function linkedinPrompt(profileJson: string, headline: string, about: string, targetRole: string) {
-  return `Optimize the candidate's LinkedIn profile${targetRole ? ` for ${targetRole} roles` : ""}.
-Return JSON:
-{
-  "headline": string (max 220 chars, keyword-rich, e.g. "MBA (Marketing) | Brand & Growth | ..."),
-  "about": string (180-300 words, first person, specific, no clichés),
-  "experience_descriptions": [ { "experience_id": string, "title": string, "description": string (3-5 lines) } ],
-  "skills": string[] (top 15-25 LinkedIn skills — ONLY skills evidenced in the profile),
-  "notes": string[] (up to 5 practical tips)
-}
-Use only facts from the profile and the current LinkedIn text.
-
-CURRENT HEADLINE: ${headline || "(none)"}
-CURRENT ABOUT:
-"""${about || "(none)"}"""
-
-PROFILE (JSON):
-${profileJson}`;
-}
-
 export function resumeParsePrompt(text: string) {
   return `Extract the resume below into JSON. Copy facts verbatim — do not embellish, summarise or invent anything. Use "" or [] when absent.
 Schema:

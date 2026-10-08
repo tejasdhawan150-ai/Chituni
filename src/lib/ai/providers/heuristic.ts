@@ -1,16 +1,8 @@
 import "server-only";
 import type { AIProvider } from "../provider";
-import {
-  jobAnalysisSchema,
-  linkedinResultSchema,
-  tailoringResultSchema,
-  type ExperienceRecommendation,
-  type JobAnalysis,
-  type RewriteResult,
-  type SkillRecommendation,
-} from "../schemas";
+import { tailoringResultSchema, type ExperienceRecommendation, type JobAnalysis, type SkillRecommendation } from "../schemas";
 import { heuristicJobAnalysis } from "@/lib/ats/extract";
-import { detectSkills, mentionsSkill } from "@/lib/ats/taxonomy";
+import { mentionsSkill } from "@/lib/ats/taxonomy";
 import { scoreResume, skillCoverage } from "@/lib/ats/score";
 import { contentToPlainText, profileSchema, type ResumeContent } from "@/lib/resume/schema";
 import { uid, uniqueCaseInsensitive } from "@/lib/utils";
@@ -62,33 +54,6 @@ export function strengthenOpener(text: string): string {
 
 function removeFiller(text: string) {
   return FILLER.reduce((acc, [re, rep]) => acc.replace(re, rep), text).trim();
-}
-
-function shorten(text: string, maxWords = 22) {
-  const t = removeFiller(strengthenOpener(text));
-  const words = t.split(/\s+/);
-  if (words.length <= maxWords) return t;
-  // Cut at the last clause boundary that keeps us under the limit, preserving numbers.
-  const clauses = t.split(/(?<=,|;)\s+|\s+(?=and\s)/);
-  let out = "";
-  for (const c of clauses) {
-    const next = out ? `${out} ${c}` : c;
-    if (next.split(/\s+/).length > maxWords && out) break;
-    out = next;
-  }
-  const kept = out.replace(/[,;]\s*$/, "");
-  const lostNumbers = (t.match(/\d+(?:\.\d+)?%?/g) ?? []).filter((n) => !kept.includes(n));
-  return lostNumbers.length ? t : kept;
-}
-
-function atsClean(text: string) {
-  return strengthenOpener(text)
-    .replace(/[•●▪►✓✔★→]/g, "")
-    .replace(/\s*&\s*/g, " and ")
-    .replace(/[“”]/g, '"')
-    .replace(/[‘’]/g, "'")
-    .replace(/\s{2,}/g, " ")
-    .trim();
 }
 
 function relevance(text: string, terms: string[]) {
@@ -180,97 +145,6 @@ export const heuristicProvider: AIProvider = {
     });
   },
 
-  async rewrite({ text, action, context }): Promise<RewriteResult> {
-    const notes: string[] = [];
-    let out = text;
-    switch (action) {
-      case "improve":
-        out = removeFiller(strengthenOpener(text));
-        break;
-      case "impactful":
-        out = removeFiller(strengthenOpener(text));
-        if (!/\d/.test(out)) notes.push("Add a real metric (%, ₹, time saved, team size) if you have one — quantified bullets perform better.");
-        break;
-      case "shorten":
-        out = shorten(text);
-        break;
-      case "ats":
-        out = atsClean(text);
-        break;
-      case "keywords": {
-        out = removeFiller(strengthenOpener(text));
-        const relevant = context.keywords.filter((k) => !mentionsSkill(out, k) && context.userSkills.some((s) => s.toLowerCase() === k.toLowerCase()));
-        if (relevant.length) notes.push(`If this work involved ${relevant.slice(0, 3).join(", ")}, mention it explicitly — those are job keywords you have.`);
-        else notes.push("No additional truthful keywords found for this bullet.");
-        break;
-      }
-    }
-    return { text: out.endsWith(".") ? out.slice(0, -1) : out, notes };
-  },
-
-  async coverLetter({ resume, req, analysis }) {
-    const b = resume.basics;
-    const role = req.role || analysis.job_title || "the role";
-    const company = req.company || analysis.company;
-    const { matched } = skillCoverage(contentToPlainText(resume), analysis);
-    const latest = resume.experience[0];
-    const topBullets = resume.experience
-      .flatMap((e) => e.bullets.map((x) => ({ x, e })))
-      .sort((a, z) => relevance(z.x, analysis.keywords) - relevance(a.x, analysis.keywords))
-      .slice(0, 2);
-    const mba = resume.education.find((e) => /mba|pgdm|pgp/i.test(`${e.degree} ${e.field}`));
-    const paras = [
-      "Dear Hiring Manager,",
-      `I am writing to apply for the ${role} position${company ? ` at ${company}` : ""}. ${latest ? `In my ${latest.current ? "current" : "most recent"} role as ${latest.title} at ${latest.company}, ` : ""}I have built experience in ${matched.slice(0, 3).join(", ") || "the areas this role focuses on"}, which aligns closely with what this role requires.`,
-      topBullets.length
-        ? `A few examples of relevant work: ${topBullets.map(({ x, e }) => `at ${e.company}, I ${x.charAt(0).toLowerCase()}${x.slice(1).replace(/\.$/, "")}`).join("; ")}. These experiences have strengthened my ability to ${analysis.responsibilities[0] ? analysis.responsibilities[0].charAt(0).toLowerCase() + analysis.responsibilities[0].slice(1).replace(/\.$/, "") : "deliver results with cross-functional teams"}.`
-        : `My background has prepared me to contribute to the responsibilities described in the job description.`,
-      mba ? `My ${mba.degree}${mba.field ? ` in ${mba.field}` : ""} from ${mba.institution} gave me a strong foundation in structured problem solving and business strategy, which I apply in my day-to-day work.` : "",
-      `I would welcome the opportunity to discuss how my experience can contribute to your team. Thank you for your time and consideration.`,
-      `Sincerely,\n${b.fullName || ""}`.trim(),
-    ].filter(Boolean);
-    return paras.join("\n\n");
-  },
-
-  async linkedin({ profile, req }) {
-    const latest = profile.experience[0];
-    const spec = profile.mbaSpecialization && profile.mbaSpecialization !== "Not applicable" ? `MBA (${profile.mbaSpecialization})` : "";
-    const topSkills = profile.skills.slice(0, 4);
-    const headline = [req.targetRole || profile.basics.headline || latest?.title, latest?.company ? `@ ${latest.company}` : "", spec, topSkills.join(" · ")]
-      .filter(Boolean)
-      .join(" | ")
-      .slice(0, 220);
-    const about = [
-      profile.summary || heuristicSummary(profile, jobAnalysisSchema.parse({ job_title: req.targetRole }), topSkills),
-      profile.experience.length
-        ? `Experience highlights:\n${profile.experience
-            .slice(0, 3)
-            .map((e) => `• ${e.title} at ${e.company}${e.bullets[0] ? ` — ${e.bullets[0].replace(/\.$/, "")}` : ""}`)
-            .join("\n")}`
-        : "",
-      profile.skills.length ? `Core skills: ${profile.skills.slice(0, 10).join(", ")}.` : "",
-      req.targetRole ? `I'm currently exploring ${req.targetRole} opportunities — happy to connect.` : "Always happy to connect with people working on interesting problems.",
-    ]
-      .filter(Boolean)
-      .join("\n\n");
-    return linkedinResultSchema.parse({
-      headline,
-      about: about.slice(0, 2600),
-      experience_descriptions: profile.experience.slice(0, 5).map((e) => ({
-        experience_id: e.id,
-        title: `${e.title} — ${e.company}`,
-        description: e.bullets.slice(0, 4).map((x) => `• ${strengthenOpener(x)}`).join("\n"),
-      })),
-      skills: uniqueCaseInsensitive([...profile.skills, ...detectSkills(contentToPlainText(profile)).map((s) => s.name)]).slice(0, 25),
-      notes: [
-        "Use a professional headshot and a banner related to your field.",
-        "Add 3–5 featured items (projects, case competitions, presentations).",
-        "Ask two managers or professors for recommendations.",
-        "Keep your headline keyword-rich — recruiters search by skills and titles.",
-      ],
-    });
-  },
-
   async parseResume(text) {
     return heuristicParseResume(text);
   },
@@ -289,6 +163,24 @@ const SECTION_HEADS: [RegExp, string][] = [
 
 const DATE_RANGE = /((?:jan|feb|mar|apr|may|jun|jul|aug|sep|sept|oct|nov|dec)[a-z]*\.?\s*\d{4}|\d{1,2}\/\d{4}|\d{4})\s*(?:-|–|—|to)\s*((?:jan|feb|mar|apr|may|jun|jul|aug|sep|sept|oct|nov|dec)[a-z]*\.?\s*\d{4}|\d{1,2}\/\d{4}|\d{4}|present|current|till date|now)/i;
 
+/**
+ * Find the candidate's name near the top. Handles PDFs where the name runs
+ * into the headline ("Aanya KapoorBusiness Analyst | MBA") and skips section
+ * headings like "PROFESSIONAL SUMMARY".
+ */
+function guessName(lines: string[]): string {
+  const looksLikeName = (t: string) =>
+    /^[A-Za-z][A-Za-z.' -]{2,50}$/.test(t) && t.split(/\s+/).length >= 2 && t.split(/\s+/).length <= 5 && !SECTION_HEADS.some(([re]) => re.test(t)) && !/@|\d/.test(t);
+  for (const raw of lines.slice(0, 6)) {
+    const first = raw.split(/\s[|•·,–—-]\s|\s{2,}|\t/)[0].trim();
+    const glued = first.split(/(?<=[a-z])(?=[A-Z][a-z])/);
+    // "Aanya KapoorBusiness Analyst" → "Aanya Kapoor"
+    if (glued.length > 1 && looksLikeName(glued[0])) return glued[0];
+    if (looksLikeName(first)) return first;
+  }
+  return "";
+}
+
 /** Best-effort structural parse without an LLM. Users review the result before saving. */
 export function heuristicParseResume(raw: string) {
   const text = raw.replace(/\r/g, "");
@@ -296,7 +188,7 @@ export function heuristicParseResume(raw: string) {
   const email = text.match(/[\w.+-]+@[\w-]+\.[\w.-]+/)?.[0] ?? "";
   const phone = text.match(/(\+?\d[\d\s-]{8,14}\d)/)?.[0]?.trim() ?? "";
   const linkedin = text.match(/(https?:\/\/)?(www\.)?linkedin\.com\/in\/[\w-]+\/?/i)?.[0] ?? "";
-  const fullName = lines.find((l) => /^[A-Za-z][A-Za-z.' -]{2,50}$/.test(l) && l.split(/\s+/).length <= 5) ?? "";
+  const fullName = guessName(lines);
 
   const sections: Record<string, string[]> = {};
   let current = "header";

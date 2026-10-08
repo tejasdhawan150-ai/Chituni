@@ -9,7 +9,7 @@ export default function TermsPage() {
       <h2>No guarantees</h2>
       <p>ATS scores are internal matching estimates. We do not guarantee interviews, offers, or that any applicant tracking system will accept your resume.</p>
       <h2>Free service</h2>
-      <p>DreamJobResume is provided free of charge. To keep it fast for everyone, AI features are subject to a daily fair-use limit per account.</p>
+      <p>DreamJobResume is provided free of charge. To keep it fast for everyone, very frequent use may be briefly rate-limited.</p>
       <h2>Acceptable use</h2>
       <p>Do not use the service to create fraudulent credentials or misrepresent your experience.</p>
       <p className="text-sm text-muted-foreground">Template — have it reviewed by counsel before launch.</p>

@@ -3,7 +3,7 @@ vi.mock("server-only", () => ({}));
 
 import { heuristicJobAnalysis } from "@/lib/ats/extract";
 import { scoreResume, totalYearsOfExperience, parseResumeDate } from "@/lib/ats/score";
-import { guardRewrite, guardTailoring, inventedNumbers, MISSING_SKILL_NOTE } from "@/lib/ai/guardrails";
+import { guardTailoring, inventedNumbers, MISSING_SKILL_NOTE } from "@/lib/ai/guardrails";
 import { heuristicProvider, strengthenOpener, heuristicParseResume } from "@/lib/ai/providers/heuristic";
 import { applyTailoring } from "@/lib/ai/engine";
 import { DEMO_PROFILE, SAMPLE_JD_DELOITTE, SAMPLE_JD_PG } from "@/lib/demo/samples";
@@ -51,12 +51,6 @@ describe("truthfulness guardrails", () => {
   it("detects invented metrics", () => {
     expect(inventedNumbers("Grew revenue 40%", "Grew revenue")).toEqual(["40"]);
     expect(inventedNumbers("Cut costs 8%", "identifying 8% cost savings")).toEqual([]);
-  });
-
-  it("rejects rewrites that add numbers", () => {
-    const out = guardRewrite("Built dashboards for sales", { text: "Built 12 dashboards for sales, boosting revenue 30%", notes: [] }, "");
-    expect(out.text).toBe("Built dashboards for sales");
-    expect(out.notes[0]).toMatch(/discarded/);
   });
 
   it("moves unsupported skills to missing and strips invented skills from ordering", () => {
@@ -116,5 +110,18 @@ Excel, Financial Modeling, Valuation, SQL`);
     expect(p.experience[0].bullets).toHaveLength(2);
     expect(p.skills).toEqual(["Excel", "Financial Modeling", "Valuation", "SQL"]);
     expect(p.mbaSpecialization).toBe("Finance");
+  });
+});
+
+describe("name detection", () => {
+  it("handles a name glued to the headline and skips section headings", () => {
+    const p = heuristicParseResume(`Aanya KapoorBusiness Analyst | MBA (Strategy & Marketing)
+aanya@example.com | +91 98765 43210
+PROFESSIONAL SUMMARY
+Business analyst with an MBA in strategy and marketing and experience in consulting and consumer goods.
+Experience
+Business Analyst at Northbridge Advisory  Jul 2022 - Present
+- Analyzed sales data for a retail client`);
+    expect(p.basics.fullName).toBe("Aanya Kapoor");
   });
 });

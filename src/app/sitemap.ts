@@ -5,7 +5,7 @@ import { MBA_GUIDES } from "@/config/mba";
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const now = new Date();
-  const core = ["/", "/templates"];
+  const core = ["/", "/build"];
   return [
     ...core.map((p) => ({ url: `${siteConfig.url}${p}`, lastModified: now, changeFrequency: "weekly" as const, priority: p === "/" ? 1 : 0.8 })),
     ...ALL_SEO_PATHS.map((p) => ({ url: `${siteConfig.url}${p}`, lastModified: now, changeFrequency: "monthly" as const, priority: 0.7 })),

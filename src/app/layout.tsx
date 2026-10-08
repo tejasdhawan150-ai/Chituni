@@ -2,7 +2,6 @@ import type { Metadata, Viewport } from "next";
 import { GeistSans } from "geist/font/sans";
 import { GeistMono } from "geist/font/mono";
 import { Toaster } from "sonner";
-import { TooltipProvider } from "@/components/ui/tooltip";
 import { siteConfig } from "@/config/site";
 import "./globals.css";
 
@@ -38,7 +37,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en-IN" className={`${GeistSans.variable} ${GeistMono.variable}`}>
       <body className="min-h-dvh font-sans">
-        <TooltipProvider delayDuration={200}>{children}</TooltipProvider>
+        {children}
         <Toaster position="bottom-right" toastOptions={{ className: "!rounded-xl !border !shadow-lg" }} />
       </body>
     </html>

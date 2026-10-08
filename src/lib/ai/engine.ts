@@ -2,12 +2,12 @@ import "server-only";
 import type { AIProvider } from "./provider";
 import { heuristicProvider } from "./providers/heuristic";
 import { createOpenAIProvider } from "./providers/openai";
-import { guardRewrite, guardTailoring, inventedNumbers } from "./guardrails";
-import type { CoverLetterRequest, JobAnalysis, LinkedInRequest, LinkedInResult, RewriteRequest, RewriteResult, TailoringResult } from "./schemas";
+import { guardTailoring } from "./guardrails";
+import type { JobAnalysis, TailoringResult } from "./schemas";
 import { heuristicJobAnalysis, mergeAnalyses } from "@/lib/ats/extract";
 import { scoreResume, totalYearsOfExperience, type AtsReport } from "@/lib/ats/score";
 import { mentionsSkill } from "@/lib/ats/taxonomy";
-import { contentToPlainText, resumeContentSchema, type Profile, type ResumeContent } from "@/lib/resume/schema";
+import { resumeContentSchema, type Profile, type ResumeContent } from "@/lib/resume/schema";
 import { getTemplate } from "@/lib/resume/templates";
 import { uniqueCaseInsensitive } from "@/lib/utils";
 
@@ -110,37 +110,6 @@ export async function tailorResume(input: { profile: ResumeContent; analysis: Jo
     current,
     projected: projected.overall >= current.overall ? projected : current,
     tailoredContent: projected.overall >= current.overall ? tailoredContent : profile,
-  };
-}
-
-export async function rewriteText(req: RewriteRequest, profile: ResumeContent): Promise<RewriteResult> {
-  const provider = getAIProvider();
-  const raw = await withFallback("rewrite", () => provider.rewrite(req), () => heuristicProvider.rewrite(req));
-  return guardRewrite(req.text, raw, contentToPlainText(profile), req.context.keywords.filter((k) => req.context.userSkills.some((s) => s.toLowerCase() === k.toLowerCase())));
-}
-
-export async function generateCoverLetter(resume: ResumeContent, req: CoverLetterRequest): Promise<string> {
-  const analysis = await analyzeJob(req.jobDescription);
-  const provider = getAIProvider();
-  const args = { resume, req, analysis };
-  const body = await withFallback("coverLetter", () => provider.coverLetter(args), () => heuristicProvider.coverLetter(args));
-  // Reject letters that introduce numbers absent from both the resume and the JD.
-  if (inventedNumbers(body, `${contentToPlainText(resume)}\n${req.jobDescription}`).length) {
-    return heuristicProvider.coverLetter(args);
-  }
-  return body;
-}
-
-export async function optimizeLinkedIn(profile: Profile, req: LinkedInRequest): Promise<LinkedInResult> {
-  const provider = getAIProvider();
-  const args = { profile, req };
-  const res = await withFallback("linkedin", () => provider.linkedin(args), () => heuristicProvider.linkedin(args));
-  const text = `${contentToPlainText(profile)}\n${req.headline}\n${req.about}`;
-  const ids = new Set(profile.experience.map((e) => e.id));
-  return {
-    ...res,
-    skills: res.skills.filter((s) => mentionsSkill(text, s)),
-    experience_descriptions: res.experience_descriptions.filter((d) => ids.has(d.experience_id) && !inventedNumbers(d.description, text).length),
   };
 }
 
