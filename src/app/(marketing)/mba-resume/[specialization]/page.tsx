@@ -52,7 +52,7 @@ export default async function MbaGuidePage({ params }: { params: Promise<{ speci
           Keywords, example bullets and tips for {g.roles.slice(0, 3).join(", ")} and similar roles — then tailor your resume to each job description in minutes.
         </p>
         <Button size="xl" variant="dark" className="mt-8" asChild>
-          <Link href="/signup">
+          <Link href="/build">
             Build My {g.name} Resume <ArrowRight />
           </Link>
         </Button>

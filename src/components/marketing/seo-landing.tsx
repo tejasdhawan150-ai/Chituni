@@ -31,16 +31,11 @@ export function SeoLanding({ page, crumbs }: { page: SeoPage; crumbs: { name: st
           <p className="text-sm font-medium capitalize text-primary">{page.eyebrow}</p>
           <h1 className="mt-3 text-balance text-4xl font-semibold tracking-tight sm:text-5xl">{page.h1}</h1>
           <p className="mx-auto mt-5 max-w-2xl text-balance text-lg leading-relaxed text-muted-foreground">{page.intro}</p>
-          <div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row">
-            <Button size="xl" variant="dark" asChild>
-              <Link href="/signup">
-                Build My Resume — Free <ArrowRight />
-              </Link>
-            </Button>
-            <Button size="xl" variant="outline" asChild>
-              <Link href="/signup?next=/tailor">Tailor My Resume</Link>
-            </Button>
-          </div>
+          <Button size="xl" variant="dark" className="mt-8" asChild>
+            <Link href="/build">
+              Build My Resume — Free <ArrowRight />
+            </Link>
+          </Button>
         </div>
       </section>
 

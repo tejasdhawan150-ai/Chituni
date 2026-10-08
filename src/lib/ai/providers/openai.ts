@@ -2,15 +2,8 @@ import "server-only";
 import OpenAI from "openai";
 import type { z } from "zod";
 import { AIError, type AIProvider } from "../provider";
-import {
-  coverLetterResultSchema,
-  jobAnalysisSchema,
-  linkedinResultSchema,
-  parsedProfileSchema,
-  rewriteResultSchema,
-  tailoringResultSchema,
-} from "../schemas";
-import { SYSTEM_PROMPT, coverLetterPrompt, jobAnalysisPrompt, linkedinPrompt, resumeParsePrompt, rewritePrompt, tailoringPrompt } from "../prompts";
+import { jobAnalysisSchema, parsedProfileSchema, tailoringResultSchema } from "../schemas";
+import { SYSTEM_PROMPT, jobAnalysisPrompt, resumeParsePrompt, tailoringPrompt } from "../prompts";
 import { uid } from "@/lib/utils";
 
 /**
@@ -65,16 +58,6 @@ export function createOpenAIProvider(apiKey: string, model: string): AIProvider 
         tailoringPrompt(JSON.stringify({ ...profile, computed_total_years_experience: yearsOfExperience }), JSON.stringify(analysis), jobDescription),
         0.3,
       ),
-    rewrite: (req) => completeJSON(rewriteResultSchema, rewritePrompt(req.text, req.action, req.context.role, req.context.keywords, req.context.userSkills), 0.4),
-    coverLetter: async ({ resume, req, analysis }) =>
-      (
-        await completeJSON(
-          coverLetterResultSchema,
-          coverLetterPrompt(JSON.stringify(resume), req.jobDescription, req.company || analysis.company, req.role || analysis.job_title, req.tone),
-          0.5,
-        )
-      ).body,
-    linkedin: ({ profile, req }) => completeJSON(linkedinResultSchema, linkedinPrompt(JSON.stringify(profile), req.headline, req.about, req.targetRole), 0.5),
     parseResume: async (text) => {
       const p = await completeJSON(parsedProfileSchema, resumeParsePrompt(text), 0);
       // Guarantee unique ids regardless of what the model returned.

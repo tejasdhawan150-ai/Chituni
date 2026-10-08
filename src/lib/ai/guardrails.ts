@@ -1,7 +1,7 @@
 import type { ResumeContent } from "@/lib/resume/schema";
 import { contentToPlainText } from "@/lib/resume/schema";
 import { mentionsSkill } from "@/lib/ats/taxonomy";
-import type { RewriteResult, TailoringResult } from "./schemas";
+import type { TailoringResult } from "./schemas";
 import { uniqueCaseInsensitive } from "@/lib/utils";
 
 /**
@@ -30,26 +30,6 @@ export function inventedProperNouns(candidate: string, source: string): string[]
   const words = candidate.match(/\b[A-Z][a-zA-Z0-9&]{2,}(?:\s+[A-Z][a-zA-Z0-9&]{2,})*\b/g) ?? [];
   const sentenceStarts = new Set(candidate.split(/(?<=[.!?;])\s+|\n/).map((s) => s.trim().split(/\s+/)[0]));
   return words.filter((w) => !sentenceStarts.has(w.split(/\s+/)[0]) && !src.includes(w.toLowerCase()));
-}
-
-/** Guard a single rewritten bullet. Falls back to original when facts would be invented. */
-export function guardRewrite(original: string, result: RewriteResult, profileText: string, allowedTerms: string[] = []): RewriteResult {
-  const source = `${original}\n${profileText}\n${allowedTerms.join(" ")}`;
-  const nums = inventedNumbers(result.text, source);
-  if (nums.length) {
-    return {
-      text: original,
-      notes: [`Suggestion discarded: it introduced metrics (${nums.join(", ")}) that aren't in your resume. Add real numbers yourself if you have them.`],
-    };
-  }
-  const nouns = inventedProperNouns(result.text, source);
-  if (nouns.length > 1) {
-    return {
-      text: original,
-      notes: [`Suggestion discarded: it referenced names or tools (${nouns.slice(0, 3).join(", ")}) that aren't in your profile.`],
-    };
-  }
-  return result;
 }
 
 /**

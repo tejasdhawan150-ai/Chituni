@@ -68,67 +68,6 @@ export const tailoringResultSchema = z.object({
 });
 export type TailoringResult = z.infer<typeof tailoringResultSchema>;
 
-export const REWRITE_ACTIONS = ["improve", "impactful", "keywords", "shorten", "ats"] as const;
-export type RewriteAction = (typeof REWRITE_ACTIONS)[number];
-export const REWRITE_LABELS: Record<RewriteAction, string> = {
-  improve: "Improve Bullet",
-  impactful: "Make More Impactful",
-  keywords: "Add Relevant Keywords",
-  shorten: "Shorten",
-  ats: "Make ATS-Friendly",
-};
-
-export const rewriteRequestSchema = z.object({
-  text: str.min(3).max(1200),
-  action: z.enum(REWRITE_ACTIONS),
-  context: z
-    .object({
-      role: str.max(160).default(""),
-      keywords: strList(40),
-      userSkills: strList(80),
-    })
-    .default({ role: "", keywords: [], userSkills: [] }),
-});
-export type RewriteRequest = z.infer<typeof rewriteRequestSchema>;
-
-export const rewriteResultSchema = z.object({
-  text: str.max(1200),
-  notes: strList(5),
-});
-export type RewriteResult = z.infer<typeof rewriteResultSchema>;
-
-export const coverLetterRequestSchema = z.object({
-  resumeId: z.string().nullable().default(null),
-  jobDescription: str.min(50, "Paste the full job description (at least 50 characters).").max(20000),
-  company: str.max(160).default(""),
-  role: str.max(160).default(""),
-  tone: z.enum(["professional", "warm", "confident"]).default("professional"),
-});
-export type CoverLetterRequest = z.infer<typeof coverLetterRequestSchema>;
-
-export const coverLetterResultSchema = z.object({
-  body: str.min(50).max(6000),
-});
-
-export const linkedinRequestSchema = z.object({
-  headline: str.max(300).default(""),
-  about: str.max(3000).default(""),
-  targetRole: str.max(160).default(""),
-});
-export type LinkedInRequest = z.infer<typeof linkedinRequestSchema>;
-
-export const linkedinResultSchema = z.object({
-  headline: str.max(220),
-  about: str.max(2600),
-  experience_descriptions: z
-    .array(z.object({ experience_id: str, title: str.max(200).default(""), description: str.max(2000) }))
-    .max(10)
-    .default([]),
-  skills: strList(50),
-  notes: strList(10),
-});
-export type LinkedInResult = z.infer<typeof linkedinResultSchema>;
-
 /** Resume parsing (upload) produces a profile draft. */
 export const parsedProfileSchema = profileSchema;
 

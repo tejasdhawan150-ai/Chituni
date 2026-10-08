@@ -53,7 +53,7 @@ export const INTENT_PAGES: SeoPage[] = [
     benefits: [
       { title: "Job-specific, not generic", body: "Every version is built against a real job description — skills reordered, bullets strengthened, summary rewritten for the role." },
       { title: "Truthful by design", body: "Our AI is constrained to your actual experience. No invented titles, metrics or certifications." },
-      { title: "ATS-safe templates", body: "13 single-column templates with real text, standard headings and clean PDF/DOCX export." },
+      { title: "ATS-safe designs", body: "Clean single-column styles with real text and standard headings. Download as PDF or Word." },
     ],
     faqs: COMMON_FAQS,
     related: ["/ats-resume-checker", "/resume-tailored-to-job-description", "/mba-resume-builder"],
@@ -62,14 +62,14 @@ export const INTENT_PAGES: SeoPage[] = [
     slug: "ai-resume-builder-india",
     path: "/ai-resume-builder-india",
     metaTitle: "AI Resume Builder India — ATS Resumes for Indian Job Seekers | DreamJobResume",
-    metaDescription: "An AI resume builder made for India: tailor resumes for Naukri, LinkedIn and campus placements. 100% free, MBA-friendly templates.",
+    metaDescription: "An AI resume builder made for India: tailor resumes for Naukri, LinkedIn and campus placements. 100% free, no sign-up.",
     eyebrow: "Made for India",
     h1: "AI resume builder for Indian job seekers",
     intro:
       "From campus placements to lateral moves, Indian recruiters screen hundreds of resumes per role. DreamJobResume helps you tailor yours for each application on Naukri, LinkedIn, Instahyre or company portals — completely free.",
     benefits: [
       { title: "Works with Naukri & LinkedIn JDs", body: "Paste any job description; we extract skills, experience requirements and keywords in seconds." },
-      { title: "MBA & PGDM aware", body: "Templates and guidance built for PGDM/MBA candidates, including education-first layouts for placements." },
+      { title: "MBA & PGDM aware", body: "Recognises PGDM, PGP and MBA degrees and the skills business recruiters look for." },
       { title: "Completely free", body: "Every feature, free for everyone. No credit card, no trial." },
     ],
     faqs: [
@@ -86,27 +86,27 @@ export const INTENT_PAGES: SeoPage[] = [
     eyebrow: "For MBA candidates",
     h1: "The resume builder built for MBA graduates",
     intro:
-      "MBA resumes are judged differently: recruiters look for structured thinking, business impact and a clear specialization story. DreamJobResume gives you MBA-specific templates, specialization keyword guidance and job-by-job tailoring.",
+      "MBA resumes are judged differently: recruiters look for structured thinking, business impact and a clear specialization story. DreamJobResume tailors your resume to each job description and shows which skills the role is looking for.",
     benefits: [
       { title: "Specialization guidance", body: "Marketing, Finance, HR, Operations, Analytics, Strategy, IB, Entrepreneurship and Product — each with its own keyword and bullet guidance." },
-      { title: "Placement-ready formats", body: "Education-first MBA Professional and Consulting templates recruiters expect." },
-      { title: "One profile, many versions", body: "Keep one master profile and generate a tailored version for every company you apply to." },
+      { title: "Recruiter-ready formats", body: "Clean, single-column designs that recruiters and applicant tracking systems can read." },
+      { title: "A version for every job", body: "Paste a new job description any time and get a new tailored resume in seconds." },
     ],
     faqs: [
       ...COMMON_FAQS,
-      { q: "Should education come first on an MBA resume?", a: "For current students and recent graduates, usually yes. Our MBA Professional and Consulting templates put education first; you can switch templates anytime without losing content." },
+      { q: "Should education come first on an MBA resume?", a: "For current students and recent graduates, usually yes. Lead with your MBA and the projects or internships most relevant to the role." },
     ],
     related: ["/resume-builder/mba-students", "/resume-builder/consultants", "/resume-builder/marketing-jobs"],
   },
   {
     slug: "ats-resume-builder",
     path: "/ats-resume-builder",
-    metaTitle: "ATS Resume Builder — ATS-Friendly Templates & Scoring | DreamJobResume",
-    metaDescription: "Create an ATS-friendly resume that applicant tracking systems can parse. Single-column templates, keyword matching and an ATS compatibility score.",
+    metaTitle: "ATS Resume Builder — ATS-Friendly Resumes & Match Score | DreamJobResume",
+    metaDescription: "Create an ATS-friendly resume that applicant tracking systems can parse. Single-column designs, keyword matching and a match score.",
     eyebrow: "ATS resume builder",
     h1: "Build an ATS-friendly resume that gets read by humans",
     intro:
-      "Applicant tracking systems parse your resume into fields and match it against the job. Tables, columns, icons and graphics can break parsing. Our templates are single-column, text-based and use standard headings — with a live ATS score as you edit.",
+      "Applicant tracking systems parse your resume into fields and match it against the job. Tables, columns, icons and graphics can break parsing. Our designs are single-column, text-based and use standard headings — and you see a match score for every job.",
     benefits: [
       { title: "Parseable by design", body: "Real text, standard section headings, no tables or text boxes in exported PDF and DOCX." },
       { title: "Live keyword matching", body: "See matched and missing keywords update as you type." },
@@ -136,15 +136,15 @@ export const INTENT_PAGES: SeoPage[] = [
     slug: "job-resume-builder",
     path: "/job-resume-builder",
     metaTitle: "Job Resume Builder — A Tailored Resume for Every Application | DreamJobResume",
-    metaDescription: "Create a different, job-specific resume for every application in minutes. Track applications and link each to the resume you sent.",
+    metaDescription: "Create a different, job-specific resume for every application in minutes. Free, no sign-up.",
     eyebrow: "Job resume builder",
     h1: "A tailored resume for every job you apply to",
     intro:
       "Applying with one resume to fifty jobs rarely works. DreamJobResume makes it fast to create a version per job, keep them organised, and track which resume went to which company.",
     benefits: [
       { title: "Versions per company", body: "Deloitte Business Analyst, P&G Brand Manager, Accenture HRBP — each its own tailored version." },
-      { title: "Application tracker", body: "Saved → Applied → Interview → Offer, with the resume and ATS score linked to every application." },
-      { title: "Cover letters too", body: "Generate a matching cover letter from the same job description." },
+      { title: "Honest suggestions", body: "If the job asks for something you don't have, we tell you — we never add it for you." },
+      { title: "PDF or Word", body: "Download your tailored resume in the format the application asks for." },
     ],
     faqs: COMMON_FAQS,
     related: ["/resume-tailored-to-job-description", "/ai-resume-builder", "/resume-builder/freshers"],
@@ -157,10 +157,10 @@ export const INTENT_PAGES: SeoPage[] = [
     eyebrow: "Resume tailoring",
     h1: "Tailor your resume to the job description — in minutes",
     intro:
-      "Tailoring used to take an hour per application. Paste the job description and DreamJobResume shows your current match, what's missing and a projected score after optimization — then you review every change before it's applied.",
+      "Tailoring used to take an hour per application. Paste the job description and DreamJobResume shows your current match, what's missing and a projected score after optimization — and you can edit anything before you download.",
     benefits: [
       { title: "Current vs projected match", body: "See your score before and after tailoring, e.g. 64% → 91%." },
-      { title: "You approve every change", body: "Accept or reject each rewritten bullet. Nothing is applied behind your back." },
+      { title: "You stay in control", body: "Edit any line before downloading. Nothing is invented on your behalf." },
       { title: "No keyword stuffing", body: "Keywords are only used where they truthfully describe your work." },
     ],
     faqs: COMMON_FAQS,
@@ -174,11 +174,11 @@ export const INTENT_PAGES: SeoPage[] = [
     eyebrow: "Resume optimization",
     h1: "Optimize every line of your resume",
     intro:
-      "Our editor puts AI next to every bullet: Improve, Make More Impactful, Add Relevant Keywords, Shorten and Make ATS-Friendly. Suggestions that would invent metrics are automatically discarded.",
+      "Paste a job description and we strengthen your bullet points, put the most relevant skills first and rewrite your summary for the role. Anything that would invent facts is automatically blocked.",
     benefits: [
-      { title: "Five AI actions per bullet", body: "Rewrite with one click, compare and accept." },
+      { title: "Stronger bullet points", body: "Weak openers like “Responsible for” become clear action verbs." },
       { title: "Guardrails against fabrication", body: "Any suggestion that adds numbers or names not in your profile is rejected." },
-      { title: "Live preview", body: "See the result instantly in your chosen template." },
+      { title: "Instant preview", body: "See your tailored resume before you download it." },
     ],
     faqs: COMMON_FAQS,
     related: ["/ats-resume-builder", "/ai-resume-builder", "/resume-tailored-to-job-description"],
@@ -187,14 +187,14 @@ export const INTENT_PAGES: SeoPage[] = [
     slug: "ai-cv-maker",
     path: "/ai-cv-maker",
     metaTitle: "AI CV Maker — Create a Job-Ready CV Online | DreamJobResume",
-    metaDescription: "Make a professional, ATS-friendly CV with AI. Upload your old CV or start from scratch, then tailor it to any job description.",
+    metaDescription: "Make a professional, ATS-friendly CV with AI. Upload your old CV or paste it, then tailor it to any job description.",
     eyebrow: "AI CV maker",
     h1: "Make a job-ready CV with AI",
     intro:
-      "Upload your existing CV (PDF or DOCX) and we'll extract your details automatically. Pick a template, paste a job description, and get a CV tailored to the role in minutes.",
+      "Upload your existing CV (PDF or Word) and we'll read your details automatically. Paste a job description and get a CV tailored to the role in seconds.",
     benefits: [
-      { title: "Import in seconds", body: "Upload a PDF/DOCX CV and review the extracted profile." },
-      { title: "13 templates", body: "Professional, modern and ATS styles — switch anytime without losing content." },
+      { title: "Import in seconds", body: "Upload a PDF or Word CV, or paste the text." },
+      { title: "Simple, clean designs", body: "Classic, Modern, Executive and Minimal — all ATS-friendly." },
       { title: "PDF & DOCX", body: "Download a text-based PDF or an editable Word document." },
     ],
     faqs: COMMON_FAQS,
@@ -344,7 +344,7 @@ export const ROLE_PAGES: SeoPage[] = ROLE_SEEDS.map((r) => ({
   benefits: [
     { title: "Role-specific keywords", body: `We detect what ${r.audience} JDs screen for and show where your resume already matches.` },
     { title: "Truthful tailoring", body: "Your real experience, better presented. Missing skills are flagged, never invented." },
-    { title: "Recruiter-ready formats", body: "Choose from 13 ATS-safe templates and export to PDF or DOCX." },
+    { title: "Recruiter-ready formats", body: "Clean ATS-friendly designs, downloadable as PDF or Word." },
   ],
   keywords: r.keywords,
   sampleBullets: r.sampleBullets,

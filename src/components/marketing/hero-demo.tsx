@@ -141,7 +141,7 @@ export function HeroDemo() {
           <span className="size-2.5 rounded-full bg-rose-300" />
           <span className="size-2.5 rounded-full bg-amber-300" />
           <span className="size-2.5 rounded-full bg-emerald-300" />
-          <span className="ml-3 rounded-md bg-background px-3 py-0.5 font-mono text-[11px] text-muted-foreground">app.dreamjobresume.com/tailor</span>
+          <span className="ml-3 rounded-md bg-background px-3 py-0.5 font-mono text-[11px] text-muted-foreground">dreamjobresume.com/build</span>
         </div>
 
         <div className="grid md:grid-cols-[0.95fr_1.25fr]">
