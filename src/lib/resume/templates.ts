@@ -32,6 +32,7 @@ export interface ResumeTemplate {
 }
 
 const EXP_ORDER: SectionKey[] = ["summary", "experience", "skills", "education", "projects", "certifications", "achievements", "additional"];
+const EDU_FIRST: SectionKey[] = ["summary", "education", "experience", "projects", "skills", "certifications", "achievements", "additional"];
 
 const SERIF = "'Georgia', 'Times New Roman', serif";
 const SANS = "'Inter', 'Helvetica Neue', Arial, sans-serif";
@@ -62,8 +63,25 @@ export const TEMPLATES: ResumeTemplate[] = [
     pdfFonts: { heading: "Helvetica", body: "Helvetica", headingBold: false }, docxFonts: { heading: "Calibri Light", body: "Calibri" },
     accent: "#475569", header: "left", sectionTitle: "plain", density: "airy", baseSize: 10.5, sectionOrder: EXP_ORDER, atsSafe: true,
   },
+  {
+    id: "consulting", name: "Consulting", category: "professional", description: "The MBB-style one-pager: education up top, dense achievement bullets.",
+    bestFor: ["Consulting", "Strategy", "MBA"], fonts: { heading: SERIF, body: SERIF },
+    pdfFonts: { heading: "Times-Roman", body: "Times-Roman", headingBold: true }, docxFonts: { heading: "Times New Roman", body: "Times New Roman" },
+    accent: "#000000", header: "centered", sectionTitle: "caps", density: "compact", baseSize: 10.5, sectionOrder: EDU_FIRST, atsSafe: true,
+  },
+  {
+    id: "corporate", name: "Corporate", category: "professional", description: "Navy accents and a split header. Polished for large-company roles.",
+    bestFor: ["Corporate roles", "HR", "Operations"], fonts: { heading: SANS, body: SANS },
+    pdfFonts: { heading: "Helvetica", body: "Helvetica", headingBold: true }, docxFonts: { heading: "Calibri", body: "Calibri" },
+    accent: "#1e3a8a", header: "split", sectionTitle: "bar", density: "normal", baseSize: 10.5, sectionOrder: EXP_ORDER, atsSafe: true,
+  },
+  {
+    id: "contemporary", name: "Contemporary", category: "modern", description: "Fresh teal accent with ruled section headings.",
+    bestFor: ["Startups", "Business development"], fonts: { heading: SANS, body: SANS },
+    pdfFonts: { heading: "Helvetica", body: "Helvetica", headingBold: true }, docxFonts: { heading: "Calibri", body: "Calibri" },
+    accent: "#0f766e", header: "left", sectionTitle: "rule-above", density: "normal", baseSize: 10.5, sectionOrder: EXP_ORDER, atsSafe: true,
+  },
 ];
-
 export const DEFAULT_TEMPLATE_ID = "classic-ats";
 
 
